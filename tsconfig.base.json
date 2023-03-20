@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@kanban/axios": ["libs/axios/src/index.ts"],
       "@kanban/encrypter": ["libs/encypter/src/index.ts"]
     }
   },
