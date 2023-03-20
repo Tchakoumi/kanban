@@ -8,12 +8,14 @@ import {
   Select,
   Typography,
 } from '@mui/material';
+import { useMode } from '@kanban/theme';
 
 export function Index() {
   function toastNotif() {
     const notif = new useNotification();
     notif.notify({ render: 'make things happen' });
   }
+  const { modeDispatch, activeMode } = useMode();
   return (
     <Box>
       <Typography variant="h1">Kanban working</Typography>
@@ -25,7 +27,16 @@ export function Index() {
       <Button variant="contained" color="primary" onClick={toastNotif}>
         Testing
       </Button>
-      <Button variant="contained" size="small" color="secondary">
+      <Button
+        variant="contained"
+        size="small"
+        color="secondary"
+        onClick={() =>
+          modeDispatch({
+            type: activeMode === 'dark' ? 'USE_LIGHT' : 'USE_DARK',
+          })
+        }
+      >
         Testing
       </Button>
       <Button variant="contained" color="error">
