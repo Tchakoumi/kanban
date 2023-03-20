@@ -5,11 +5,20 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/material": "^5.11.13",
     "@nrwl/next": "15.8.5",
+    "formik": "^2.2.9",
     "next": "13.1.1",
+    "rc-scrollbars": "^1.1.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tslib": "^2.3.0"
+    "react-toastify": "^9.1.1",
+    "tslib": "^2.3.0",
+    "uuid": "^9.0.0",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.14.5",
@@ -25,6 +34,7 @@
     "@types/node": "18.14.2",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
+    "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
     "babel-jest": "^29.4.1",
