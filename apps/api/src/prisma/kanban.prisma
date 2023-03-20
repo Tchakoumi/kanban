@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Board {
+  board_id   String   @id @default(uuid()) @db.VarChar(36)
+  board_name String   @db.VarChar(45)
+  is_deleted Boolean  @default(false) @db.TinyInt
+  created_at DateTime @default(now()) @db.DateTime(0)
+
+  Columns     Column[]
+  BoardAudits BoardAudit[]
+}
+
+model BoardAudit {
+  board_audit_id String   @id @default(uuid()) @db.VarChar(36)
+  board_name     String   @db.VarChar(45)
+  is_deleted     Boolean  @default(false) @db.TinyInt
+  audited_at     DateTime @default(now()) @db.DateTime(0)
+  board_id       String   @db.VarChar(36)
+  Board          Board    @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Column {
+  column_id         String   @id @default(uuid()) @db.VarChar(36)
+  column_title      String   @db.VarChar(45)
+  column_color_code String   @db.VarChar(10)
+  column_position   Int
+  is_deleted        Boolean  @default(false) @db.TinyInt
+  created_at        DateTime @default(now()) @db.DateTime(0)
+  board_id          String   @db.VarChar(36)
+  Board             Board    @relation(fields: [board_id], references: [board_id], onDelete: Cascade, onUpdate: Cascade)
+
+  Tasks        Task[]
+  ColumnAudits ColumnAudit[]
+}
+
+model ColumnAudit {
+  column_audit_id   String   @id @default(uuid()) @db.VarChar(36)
+  column_position   Int
+  column_title      String   @db.VarChar(45)
+  column_color_code String   @db.VarChar(10)
+  is_deleted        Boolean  @default(false) @db.TinyInt
+  audited_at        DateTime @default(now()) @db.DateTime(0)
+  column_id         String   @db.VarChar(36)
+  Column            Column   @relation(fields: [column_id], references: [column_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Task {
+  task_id          String   @id @default(uuid()) @db.VarChar(36)
+  task_position    Int
+  task_title       String   @db.VarChar(45)
+  task_description String   @db.TinyText
+  is_deleted       Boolean  @default(false) @db.TinyInt
+  created_at       DateTime @default(now()) @db.DateTime(0)
+  column_id        String   @db.VarChar(36)
+  Column           Column   @relation(fields: [column_id], references: [column_id], onDelete: Cascade, onUpdate: Cascade)
+
+  Subtasks   Subtask[]
+  TaskAudits TaskAudit[]
+}
+
+model TaskAudit {
+  task_audit_id    String   @id @default(uuid()) @db.VarChar(36)
+  task_position    Int
+  task_title       String   @db.VarChar(45)
+  task_description String   @db.TinyText
+  is_deleted       Boolean  @default(false) @db.TinyInt
+  audited_at       DateTime @default(now()) @db.DateTime(0)
+  task_id          String   @db.VarChar(36)
+  Task             Task     @relation(fields: [task_id], references: [task_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Subtask {
+  subtask_id    String         @id @default(uuid()) @db.VarChar(36)
+  subtask_title String         @db.VarChar(36)
+  is_done       Boolean        @default(false) @db.TinyInt
+  is_deleted    Boolean        @default(false) @db.TinyInt
+  created_at    DateTime       @default(now()) @db.DateTime(0)
+  task_id       String         @db.VarChar(36)
+  Task          Task           @relation(fields: [task_id], references: [task_id], onDelete: Cascade, onUpdate: Cascade)
+  
+  SubtaskAudits  SubtaskAudit[]
+}
+
+model SubtaskAudit {
+  subtask_audit_id String   @id @default(uuid()) @db.VarChar(36)
+  subtask_title    String   @db.VarChar(36)
+  is_done          Boolean  @default(false) @db.TinyInt
+  is_deleted       Boolean  @default(false) @db.TinyInt
+  audited_at       DateTime @default(now()) @db.DateTime(0)
+  subtask_id       String   @db.VarChar(36)
+  Subtask          Subtask  @relation(fields: [subtask_id], references: [subtask_id], onDelete: Cascade, onUpdate: Cascade)
+}
