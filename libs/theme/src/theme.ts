@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import React from 'react';
+import { ModeType } from './modeContext/mode.interface';
 
 // thin: 100
 // extraLight: 200
@@ -86,7 +87,7 @@ declare module '@mui/material/styles' {
 
 const MEDIUM_GREY = '#828FA3';
 
-export function generateTheme(mode?: 'light' | 'dark') {
+export function generateTheme(mode?: ModeType) {
   return createTheme({
     palette: {
       mode,
