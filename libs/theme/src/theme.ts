@@ -178,10 +178,16 @@ export function generateTheme(mode?: ModeType) {
             },
             '&.MuiButton-containedSecondary': {
               color: theme.palette.primary.main,
-              backgroundColor: 'rgba(99, 95, 199, 0.1)',
+              backgroundColor:
+                theme.palette.mode === 'light'
+                  ? 'rgba(99, 95, 199, 0.1)'
+                  : 'white',
             },
             '&.MuiButton-containedSecondary:hover': {
-              backgroundColor: 'rgba(99, 95, 199, 0.25)',
+              backgroundColor:
+                theme.palette.mode === 'light'
+                  ? 'rgba(99, 95, 199, 0.25)'
+                  : 'white',
             },
             '&.MuiButton-containedError:hover': {
               backgroundColor: theme.palette.error.light,
