@@ -1,13 +1,12 @@
+import { generateTheme } from '@kanban/theme';
 import {
+  Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
+  Dialog, DialogContent,
   DialogContentText,
-  DialogTitle,
+  DialogTitle
 } from '@mui/material';
 import { DialogTransition } from './dialog-transition';
-import { generateTheme } from '@kanban/theme';
 
 export function ConfirmDialog({
   isDialogOpen,
@@ -26,6 +25,8 @@ export function ConfirmDialog({
   confirmButton?: string;
   danger?: boolean;
 }) {
+  const theme = generateTheme();
+
   return (
     <Dialog
       open={isDialogOpen}
@@ -34,18 +35,41 @@ export function ConfirmDialog({
       onClose={closeDialog}
     >
       <DialogTitle
-        sx={{ color: danger ? generateTheme().palette.error.main : 'initial' }}
+        sx={{
+          color: danger ? generateTheme().palette.error.main : 'initial',
+          ...theme.typography.h2,
+        }}
       >
         {dialogTitle}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>{dialogMessage}</DialogContentText>
+        <DialogContentText
+          sx={{
+            width: {
+              mobile: 'initial',
+              tablet: '480px',
+            },
+            justifySelf: 'center',
+            whiteSpace: 'break-spaces',
+            ...theme.typography.caption,
+          }}
+        >
+          {dialogMessage}
+        </DialogContentText>
       </DialogContent>
-      <DialogActions>
+      <Box
+        sx={{
+          display: 'grid',
+          gridAutoFlow: 'column',
+          columnGap: 2,
+          padding: '0 24px',
+          paddingBottom: '20px',
+        }}
+      >
         <Button
           sx={{ textTransform: 'none' }}
           color={danger ? 'error' : 'primary'}
-          variant={danger ? 'outlined' : 'contained'}
+          variant={danger ? 'contained' : 'outlined'}
           onClick={() => {
             confirm();
             closeDialog();
@@ -55,13 +79,13 @@ export function ConfirmDialog({
         </Button>
         <Button
           sx={{ textTransform: 'none' }}
-          color={danger ? 'primary' : 'error'}
-          variant={danger ? 'outlined' : 'text'}
+          color={danger ? 'secondary' : 'error'}
+          variant={danger ? 'contained' : 'text'}
           onClick={closeDialog}
         >
           Cancel
         </Button>
-      </DialogActions>
+      </Box>
     </Dialog>
   );
 }
