@@ -9,7 +9,6 @@ export interface IBoard extends ICreateBoard {
 export interface ICreateColumn {
   board_id: string;
   column_title: string;
-  column_position: number;
   column_color_code: string;
 }
 

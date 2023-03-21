@@ -1,12 +1,6 @@
 import { ICreateColumn } from '@kanban/interfaces';
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsHexColor,
-  IsInt,
-  IsString,
-  IsUUID,
-  MaxLength,
-} from 'class-validator';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { IsHexColor, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class CreateColumnDto implements ICreateColumn {
   @IsUUID()
@@ -18,11 +12,9 @@ export class CreateColumnDto implements ICreateColumn {
   @ApiProperty({ maxLength: 45 })
   column_title: string;
 
-  @IsInt()
-  @ApiProperty()
-  column_position: number;
-
   @IsHexColor()
-  @ApiProperty({ description: 'Hexadecimal code' })
+  @ApiProperty({ description: 'Hexadecimal color code', example: '#ba3925' })
   column_color_code: string;
 }
+
+export class UpdateColumnDto extends PartialType(CreateColumnDto) {}
