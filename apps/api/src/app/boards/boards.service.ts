@@ -1,7 +1,7 @@
 import { IBoard } from '@kanban/interfaces';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateBoardDto } from './boards.dto';
+import { CreateBoardDto, UpdateBoardDto } from './boards.dto';
 
 @Injectable()
 export class BoardsService {
@@ -28,5 +28,23 @@ export class BoardsService {
       data: newBoard,
     });
     return board;
+  }
+
+  async update(board_id: string, updateData: UpdateBoardDto) {
+    const { board_name } = await this.prismaService.board.findUniqueOrThrow({
+      select: { board_name: true },
+      where: { board_id },
+    });
+    await this.prismaService.board.update({
+      data: {
+        ...updateData,
+        BoardAudits: {
+          create: {
+            board_name,
+          },
+        },
+      },
+      where: { board_id },
+    });
   }
 }
