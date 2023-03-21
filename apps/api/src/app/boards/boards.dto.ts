@@ -1,10 +1,11 @@
 import { ICreateBoard } from '@kanban/interfaces';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
 
 export class CreateBoardDto implements ICreateBoard {
   @IsString()
-  @ApiProperty()
+  @MaxLength(45)
+  @ApiProperty({ maxLength: 45 })
   board_name: string;
 }
 
