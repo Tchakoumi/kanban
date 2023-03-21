@@ -51,6 +51,10 @@ export interface IEditBoard extends Partial<ICreateBoard> {
   updatedColumns: Partial<ICreateColumn>[];
 }
 
-export interface IBoard extends ICreateBoard {
+export interface IBoard extends Omit<ICreateBoard, 'newColumns'> {
   board_id: string;
+}
+
+export interface IBoardDetails extends IBoard {
+  columns: IColumn[];
 }
