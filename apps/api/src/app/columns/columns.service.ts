@@ -1,5 +1,6 @@
 import { IColumn } from '@kanban/interfaces';
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { excludeKeys } from '../../utils';
 import { CreateColumnDto } from './columns.dto';
@@ -25,9 +26,28 @@ export class ColumnsService {
   }
 
   async create(newColumn: CreateColumnDto) {
+    const numberOfColumns = await this.prismaService.column.count();
     const column = await this.prismaService.column.create({
-      data: newColumn,
+      data: {
+        ...newColumn,
+        column_position: numberOfColumns,
+      },
     });
     return excludeKeys(column, 'created_at', 'is_deleted');
+  }
+
+  async update(column_id: string, updateData: Prisma.ColumnUpdateInput) {
+    const column = await this.prismaService.column.findUniqueOrThrow({
+      where: { column_id },
+    });
+    await this.prismaService.column.update({
+      data: {
+        ...updateData,
+        ColumnAudits: {
+          create: excludeKeys(column, 'created_at'),
+        },
+      },
+      where: { column_id },
+    });
   }
 }

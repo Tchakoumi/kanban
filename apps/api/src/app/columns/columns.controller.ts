@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { CreateColumnDto } from './columns.dto';
 import { ColumnsService } from './columns.service';
@@ -31,6 +33,33 @@ export class ColumnsController {
     } catch (error) {
       throw new HttpException(
         `Oops! They was an error creating new column: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Put(':column_id/edit')
+  async updateColumn(
+    @Param('column_id') columnId: string,
+    @Body() newColumn: CreateColumnDto
+  ) {
+    try {
+      return await this.columnsService.update(columnId, newColumn);
+    } catch (error) {
+      throw new HttpException(
+        `Oops! They was an error updating column: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Delete(':column_id/delete')
+  async deleteColumn(@Param('column_id') columnId: string) {
+    try {
+      return await this.columnsService.update(columnId, { is_deleted: true });
+    } catch (error) {
+      throw new HttpException(
+        `Oops! They was an error deleting column: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
