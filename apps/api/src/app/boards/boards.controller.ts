@@ -1,8 +1,13 @@
 import {
   Body,
   Controller,
-  Get, HttpException, HttpStatus, Param,
-  Post, Put
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateBoardDto, UpdateBoardDto } from './boards.dto';
@@ -44,7 +49,19 @@ export class BoardsController {
       return await this.boardService.update(boardId, updateData);
     } catch (error) {
       throw new HttpException(
-        `Oops! They was an error creating new board: ${error.message}`,
+        `Oops! They was an error updating board: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Delete(':board_id/delete')
+  async deleteBoard(@Param('board_id') boardId: string) {
+    try {
+      return await this.boardService.update(boardId, { is_deleted: true });
+    } catch (error) {
+      throw new HttpException(
+        `Oops! They was an error updating board: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
