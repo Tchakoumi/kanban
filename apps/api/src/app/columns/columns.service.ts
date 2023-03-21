@@ -15,4 +15,11 @@ export class ColumnsService {
       excludeKeys(column, 'created_at', 'is_deleted')
     );
   }
+
+  async findOne(column_id: string): Promise<IColumn> {
+    const column = await this.prismaService.column.findUniqueOrThrow({
+      where: { column_id },
+    });
+    return excludeKeys(column, 'created_at', 'is_deleted');
+  }
 }
