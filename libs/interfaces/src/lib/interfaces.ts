@@ -10,18 +10,19 @@ export interface ISubtask extends ICreateSubtask {
 export interface ICreateTask {
   column_id: string;
   task_title: string;
-  task_position: number;
   task_description: string;
   newSubtasks: ICreateSubtask[];
 }
 
 export interface IEditTask extends Partial<ICreateTask> {
+  task_position: number;
   deletedTaskIds: string[];
   updatedSubtasks: Partial<ISubtask>[];
 }
 
 export interface ITask extends Omit<ICreateTask, 'newSubtasks'> {
   task_id: string;
+  task_position: number;
   total_done_subtasks: number;
   total_undone_subtasks: number;
 }
@@ -37,6 +38,7 @@ export interface ICreateColumn {
 
 export interface IColumn extends ICreateColumn {
   column_id: string;
+  column_position: number;
 }
 
 export interface ICreateBoard {
