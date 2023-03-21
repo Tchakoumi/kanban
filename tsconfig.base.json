@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@kanban/dialog": ["libs/dialog/src/index.ts"],
+      "@kanban/theme": ["libs/theme/src/index.ts"],
+      "@kanban/toast": ["libs/toast/src/index.ts"],
       "@kanban/axios": ["libs/axios/src/index.ts"],
       "@kanban/encrypter": ["libs/encypter/src/index.ts"],
       "@kanban/interfaces": ["libs/interfaces/src/index.ts"]

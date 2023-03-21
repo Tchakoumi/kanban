@@ -1,16 +1,31 @@
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import { KanbanThemeProvider } from '@kanban/theme';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import './styles.css';
+import 'react-toastify/dist/ReactToastify.css';
+import createEmotionCache from '../config_mui/createEmotionCache';
+import './globalStyles.css';
 
-function CustomApp({ Component, pageProps }: AppProps) {
+interface CustomAppProps extends AppProps {
+  emotionCache?: EmotionCache;
+}
+
+const clientSideEmotionCache = createEmotionCache();
+
+function CustomApp(props: CustomAppProps) {
+  const { Component, pageProps, emotionCache = clientSideEmotionCache } = props;
+
   return (
     <>
       <Head>
-        <title>Welcome to app!</title>
+        <title>Kanban</title>
+        <link rel="icon" type="image/x-icon" href="favicon_colored.png" />
       </Head>
-      <main className="app">
-        <Component {...pageProps} />
-      </main>
+      <CacheProvider value={emotionCache}>
+        <KanbanThemeProvider>
+          <Component {...pageProps} />
+        </KanbanThemeProvider>
+      </CacheProvider>
     </>
   );
 }
