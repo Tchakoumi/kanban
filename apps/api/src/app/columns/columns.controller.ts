@@ -9,9 +9,11 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateColumnDto } from './columns.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateColumnDto, UpdateColumnDto } from './columns.dto';
 import { ColumnsService } from './columns.service';
 
+@ApiTags('Columns')
 @Controller('columns')
 export class ColumnsController {
   constructor(private columnsService: ColumnsService) {}
@@ -41,7 +43,7 @@ export class ColumnsController {
   @Put(':column_id/edit')
   async updateColumn(
     @Param('column_id') columnId: string,
-    @Body() newColumn: CreateColumnDto
+    @Body() newColumn: UpdateColumnDto
   ) {
     try {
       return await this.columnsService.update(columnId, newColumn);

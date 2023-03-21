@@ -44,7 +44,7 @@ export class ColumnsService {
       data: {
         ...updateData,
         ColumnAudits: {
-          create: excludeKeys(column, 'created_at'),
+          create: excludeKeys(column, 'created_at', 'column_id', 'board_id'),
         },
       },
       where: { column_id },

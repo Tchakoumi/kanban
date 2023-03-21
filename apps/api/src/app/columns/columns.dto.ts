@@ -1,6 +1,13 @@
 import { ICreateColumn } from '@kanban/interfaces';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsHexColor, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsHexColor,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateColumnDto implements ICreateColumn {
   @IsUUID()
@@ -17,4 +24,9 @@ export class CreateColumnDto implements ICreateColumn {
   column_color_code: string;
 }
 
-export class UpdateColumnDto extends PartialType(CreateColumnDto) {}
+export class UpdateColumnDto extends PartialType(CreateColumnDto) {
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  column_position?: number;
+}
