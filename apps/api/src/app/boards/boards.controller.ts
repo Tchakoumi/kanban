@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateBoardDto } from './boards.dto';
 import { BoardsService } from './boards.service';
@@ -20,6 +28,13 @@ export class BoardsController {
 
   @Post('new')
   async createBoard(@Body() newBoard: CreateBoardDto) {
-    return await this.boardService.create(newBoard);
+    try {
+      return await this.boardService.create(newBoard);
+    } catch (error) {
+      throw new HttpException(
+        `Oops! They was an error creating new board: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }
