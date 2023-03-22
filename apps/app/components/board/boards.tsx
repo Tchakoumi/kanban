@@ -2,18 +2,18 @@ import { IBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { Box, Typography } from '@mui/material';
 import BoardItem from './boardItem';
+import { useRouter } from 'next/router';
+import { useActiveBoard } from '../../services';
 
-export default function Boards({
-  boards,
-  activeBoard,
-  openBoard,
-}: {
-  boards: IBoard[];
-  activeBoard?: IBoard;
-  openBoard: (board: IBoard) => void;
-}) {
+export default function Boards({ boards }: { boards: IBoard[] }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
+  const {
+    push,
+    query: { board_id },
+  } = useRouter();
+
+  const { activeBoard } = useActiveBoard(board_id as string);
 
   return (
     <Box sx={{ display: 'grid', rowGap: 1 }}>
@@ -31,7 +31,7 @@ export default function Boards({
       {boards.map(({ board_id, board_name }, index) => (
         <BoardItem
           key={index}
-          handleClick={() => openBoard({ board_id, board_name })}
+          handleClick={() => push(`/${board_id}`)}
           title={board_name}
           isActive={activeBoard?.board_id === board_id}
         />
