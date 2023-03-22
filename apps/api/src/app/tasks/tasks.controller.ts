@@ -2,14 +2,15 @@ import {
   Body,
   Controller,
   Get,
-  Param,
-  Post,
-  Query,
   HttpException,
   HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateTaskDto } from './tasks.dto';
+import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
 import { TasksService } from './tasks.service';
 
 @ApiTags('Tasks')
@@ -33,7 +34,22 @@ export class TasksController {
       return await this.tasksService.create(newTask);
     } catch (error) {
       throw new HttpException(
-        `Oops! They was an error updating column: ${error.message}`,
+        `Oops! They was an error creating new task: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Put(':task_id/edit')
+  async updateTask(
+    @Param('task_id') task_id: string,
+    @Body() updateData: UpdateTaskDto
+  ) {
+    try {
+      return await this.tasksService.update(task_id, updateData);
+    } catch (error) {
+      throw new HttpException(
+        `Oops! They was an error updating task: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
