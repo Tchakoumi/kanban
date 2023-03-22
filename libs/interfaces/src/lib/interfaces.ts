@@ -15,7 +15,7 @@ export interface ICreateTask {
 }
 
 export interface IEditTask extends Partial<ICreateTask> {
-  task_position: number;
+  task_position?: number;
   deletedSubtaskIds: string[];
   updatedSubtasks: Partial<ISubtask>[];
 }
