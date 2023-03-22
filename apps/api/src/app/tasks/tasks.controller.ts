@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -50,6 +51,18 @@ export class TasksController {
     } catch (error) {
       throw new HttpException(
         `Oops! They was an error updating task: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Delete(':task_id/delete')
+  async deleteTask(@Param('task_id') task_id: string) {
+    try {
+      return await this.tasksService.delete(task_id);
+    } catch (error) {
+      throw new HttpException(
+        `Oops! They was an error deleting task: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

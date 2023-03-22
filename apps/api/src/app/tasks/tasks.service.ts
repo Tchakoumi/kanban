@@ -187,4 +187,21 @@ export class TasksService {
     );
     return { updatedTasks, auditedTasks };
   }
+
+  async delete(task_id: string) {
+    const task = await this.prismaService.task.findUniqueOrThrow({
+      where: { task_id },
+    });
+    await this.prismaService.task.update({
+      data: {
+        is_deleted: true,
+        TaskAudits: {
+          create: {
+            ...excludeKeys(task, 'created_at', 'is_deleted', 'column_id'),
+          },
+        },
+      },
+      where: { task_id },
+    });
+  }
 }
