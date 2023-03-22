@@ -126,7 +126,7 @@ export function Index({ boards }: { boards: IBoard[] }) {
                 <Visibility />
               </Box>
             </Tooltip>
-            <Columns />
+            <Columns columns={[]} />
           </Box>
         </Box>
       </Box>
