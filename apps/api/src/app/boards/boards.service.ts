@@ -1,9 +1,8 @@
 import { IBoard, IBoardDetails } from '@kanban/interfaces';
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { excludeKeys } from '../../utils';
-import { CreateBoardDto } from './boards.dto';
+import { CreateBoardDto, UpdateBoardDto } from './boards.dto';
 
 @Injectable()
 export class BoardsService {
@@ -65,22 +64,63 @@ export class BoardsService {
     return board;
   }
 
-  async update(board_id: string, updateData: Prisma.BoardUpdateInput) {
-    const { board_name } = await this.prismaService.board.findUniqueOrThrow({
-      select: { board_name: true },
+  async update(
+    board_id: string,
+    { board_name, newColumns, deletedColumnIds, updatedColumns }: UpdateBoardDto
+  ) {
+    const {
+      board_name: oldName,
+      _count: { Columns: numberOfColumns },
+    } = await this.prismaService.board.findUniqueOrThrow({
+      select: { board_name: true, _count: { select: { Columns: true } } },
       where: { board_id },
     });
-    await this.prismaService.board.update({
-      data: {
-        ...updateData,
-        BoardAudits: {
-          create: {
-            board_name,
+    const auditedColumns = await this.prismaService.column.findMany({
+      where: {
+        OR: [
+          ...deletedColumnIds,
+          ...updatedColumns.map((_) => _.column_id),
+        ].map((column_id) => ({ column_id })),
+      },
+    });
+    await this.prismaService.$transaction([
+      this.prismaService.board.update({
+        data: {
+          board_name,
+          BoardAudits: {
+            create: { board_name: oldName },
+          },
+          Columns: {
+            createMany: {
+              data: newColumns
+                ? newColumns.map((column) => ({
+                    ...column,
+                    column_position: numberOfColumns + 1,
+                  }))
+                : [],
+            },
+            updateMany: {
+              data: { is_deleted: true },
+              where: {
+                OR: deletedColumnIds.map((column_id) => ({ column_id })),
+              },
+            },
           },
         },
-      },
-      where: { board_id },
-    });
+        where: { board_id },
+      }),
+      ...updatedColumns.map(({ column_id, ...newColumn }) =>
+        this.prismaService.column.update({
+          data: newColumn,
+          where: { column_id },
+        })
+      ),
+      this.prismaService.columnAudit.createMany({
+        data: auditedColumns.map((column) =>
+          excludeKeys(column, 'board_id', 'created_at')
+        ),
+      }),
+    ]);
   }
 
   async delete(board_id: string) {
