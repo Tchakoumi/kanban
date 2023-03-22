@@ -58,10 +58,10 @@ export class BoardsController {
   @Delete(':board_id/delete')
   async deleteBoard(@Param('board_id') boardId: string) {
     try {
-      return await this.boardService.update(boardId, { is_deleted: true });
+      return await this.boardService.delete(boardId);
     } catch (error) {
       throw new HttpException(
-        `Oops! They was an error updating board: ${error.message}`,
+        `Oops! They was an error deleting board: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

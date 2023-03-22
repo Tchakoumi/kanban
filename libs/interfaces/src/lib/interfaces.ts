@@ -52,7 +52,7 @@ export interface ICreateBoard {
 
 export interface IEditBoard extends Partial<ICreateBoard> {
   deletedColumnIds: string[];
-  updatedColumns: Partial<ICreateColumn>[];
+  updatedColumns: Partial<IColumn>[];
 }
 
 export interface IBoard extends Omit<ICreateBoard, 'newColumns'> {
