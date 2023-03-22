@@ -1,23 +1,16 @@
-import { useNotification } from '@kanban/toast';
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { ConfirmDialog } from '@kanban/dialog';
+import { IBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
+import { Visibility } from '@mui/icons-material';
+import {
+  Box, Tooltip
+} from '@mui/material';
+import { GetServerSideProps } from 'next';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import Columns from '../components/columns';
 import PrimaryNav from '../components/primaryNav';
 import SecondaryNav from '../components/secondaryNav';
-import { useState } from 'react';
-import { Visibility } from '@mui/icons-material';
-import { IBoard } from '@kanban/interfaces';
-import { toast } from 'react-toastify';
-import { GetServerSideProps } from 'next';
-import { ConfirmDialog } from '@kanban/dialog';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -46,11 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export function Index({ boards }: { boards: IBoard[] }) {
-  function toastNotif() {
-    const notif = new useNotification();
-    notif.notify({ render: 'make things happen' });
-  }
-  const { modeDispatch, activeMode } = useMode();
+  const { activeMode } = useMode();
   const [isSecondaryNavOpen, setIsSecondaryNavOpen] = useState<boolean>(true);
   const theme = generateTheme(activeMode);
 
@@ -118,7 +107,7 @@ export function Index({ boards }: { boards: IBoard[] }) {
             editBoard={editBoard}
             deleteBoard={deleteBoard}
           />
-          <Box sx={{ position: 'relative' }}>
+          <Box sx={{ position: 'relative', padding: 3 }}>
             <Tooltip arrow title="Show Sidebar">
               <Box
                 sx={{
@@ -139,47 +128,7 @@ export function Index({ boards }: { boards: IBoard[] }) {
                 <Visibility />
               </Box>
             </Tooltip>
-            <Typography variant="h1">Kanban working</Typography>
-            <Typography variant="h2">Kanban working</Typography>
-            <Typography variant="h3">Kanban working</Typography>
-            <Typography variant="body1">Kanban working</Typography>
-            <Typography variant="body2">Kanban working</Typography>
-            <Typography variant="caption">Kanban working</Typography>
-            <Button variant="contained" color="primary" onClick={toastNotif}>
-              toast
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              color="secondary"
-              onClick={() =>
-                modeDispatch({
-                  type: activeMode === 'dark' ? 'USE_LIGHT' : 'USE_DARK',
-                })
-              }
-            >
-              change theme
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => setIsSecondaryNavOpen(true)}
-            >
-              Open nav
-            </Button>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Age</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                value={10}
-                size="small"
-                label="Age"
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
+            <Columns />
           </Box>
         </Box>
       </Box>
