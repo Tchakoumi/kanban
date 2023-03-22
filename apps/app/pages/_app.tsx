@@ -5,6 +5,7 @@ import Head from 'next/head';
 import 'react-toastify/dist/ReactToastify.css';
 import createEmotionCache from '../config_mui/createEmotionCache';
 import './globalStyles.css';
+import { SWRConfig } from 'swr';
 
 interface CustomAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -22,9 +23,15 @@ function CustomApp(props: CustomAppProps) {
         <link rel="icon" type="image/x-icon" href="favicon_colored.png" />
       </Head>
       <CacheProvider value={emotionCache}>
-        <KanbanThemeProvider>
-          <Component {...pageProps} />
-        </KanbanThemeProvider>
+        <SWRConfig
+          value={{
+            refreshInterval: 3000,
+          }}
+        >
+          <KanbanThemeProvider>
+            <Component {...pageProps} />
+          </KanbanThemeProvider>
+        </SWRConfig>
       </CacheProvider>
     </>
   );
