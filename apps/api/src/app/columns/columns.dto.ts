@@ -1,5 +1,5 @@
 import { ICreateColumn } from '@kanban/interfaces';
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import {
   IsHexColor,
   IsNumber,
@@ -24,7 +24,9 @@ export class CreateColumnDto implements ICreateColumn {
   column_color_code: string;
 }
 
-export class UpdateColumnDto extends PartialType(CreateColumnDto) {
+export class UpdateColumnDto extends PartialType(
+  OmitType(CreateColumnDto, ['board_id'])
+) {
   @IsNumber()
   @IsOptional()
   @ApiProperty()

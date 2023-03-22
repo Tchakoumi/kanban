@@ -1,17 +1,14 @@
-import {
-    ICreateSubtask,
-    ICreateTask,
-    IEditTask
-} from '@kanban/interfaces';
+import { ICreateSubtask, ICreateTask, IEditTask } from '@kanban/interfaces';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-    IsArray,
-    IsBoolean, IsNumber,
-    IsOptional,
-    IsString,
-    IsUUID,
-    ValidateNested
+  IsArray,
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  ValidateNested,
 } from 'class-validator';
 
 export class CreateSubtaskDto implements ICreateSubtask {
@@ -21,7 +18,7 @@ export class CreateSubtaskDto implements ICreateSubtask {
 }
 
 export class CreateTaskDto implements ICreateTask {
-  @IsString()
+  @IsUUID()
   @ApiProperty()
   column_id: string;
 
@@ -34,13 +31,13 @@ export class CreateTaskDto implements ICreateTask {
   task_description: string;
 
   @IsArray()
-  @ApiProperty()
   @Type(() => CreateSubtaskDto)
   @ValidateNested({ each: true })
+  @ApiProperty({ type: Array<CreateSubtaskDto> })
   newSubtasks: CreateSubtaskDto[];
 }
 
-export class EditSubtaskDto extends PartialType(CreateSubtaskDto) {
+export class UpdateSubtaskDto extends PartialType(CreateSubtaskDto) {
   @IsUUID()
   @ApiProperty()
   subtask_id: string;
@@ -51,21 +48,22 @@ export class EditSubtaskDto extends PartialType(CreateSubtaskDto) {
   is_done?: boolean;
 }
 
-export class EditTaskDto
+export class UpdateTaskDto
   extends PartialType(CreateTaskDto)
   implements IEditTask
 {
   @IsNumber()
+  @IsOptional()
   @ApiProperty()
-  task_position: number;
+  task_position?: number;
 
-  @IsString()
   @ApiProperty()
+  @IsString({ each: true })
   deletedSubtaskIds: string[];
 
   @IsArray()
   @ApiProperty()
-  @Type(() => EditSubtaskDto)
+  @Type(() => UpdateSubtaskDto)
   @ValidateNested({ each: true })
-  updatedSubtasks: EditSubtaskDto[];
+  updatedSubtasks: UpdateSubtaskDto[];
 }

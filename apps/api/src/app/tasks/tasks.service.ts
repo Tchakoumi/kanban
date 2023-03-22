@@ -1,8 +1,9 @@
 import { ITask, ITaskDetails } from '@kanban/interfaces';
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { excludeKeys } from '../../utils';
-import { CreateTaskDto, EditTaskDto } from './tasks.dto';
+import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
 
 @Injectable()
 export class TasksService {
@@ -10,13 +11,14 @@ export class TasksService {
 
   async findAll(column_id?: string): Promise<ITask[]> {
     const tasks = await this.prismaService.task.findMany({
+      orderBy: { task_position: 'asc' },
       include: { Subtasks: { select: { is_done: true } } },
       where: { is_deleted: false, column_id },
     });
     return tasks.map(({ Subtasks, ...task }) => {
       const [total_done_subtasks, total_undone_subtasks] = Subtasks.reduce(
         ([totalDone, totalUndone], { is_done }) =>
-          is_done ? [totalDone++, totalUndone] : [totalDone, totalUndone++],
+          is_done ? [++totalDone, totalUndone] : [totalDone, ++totalUndone],
         [0, 0]
       );
       return {
@@ -84,9 +86,9 @@ export class TasksService {
       deletedSubtaskIds,
       updatedSubtasks,
       newSubtasks,
-      column_id,
+      task_position,
       ...newTask
-    }: EditTaskDto
+    }: UpdateTaskDto
   ) {
     const task = await this.prismaService.task.findUniqueOrThrow({
       where: { task_id },
@@ -99,13 +101,25 @@ export class TasksService {
         ].map((subtask_id) => ({ subtask_id })),
       },
     });
-    return this.prismaService.$transaction([
+    const hasTaskPositionChanged =
+      task_position && task_position !== task.task_position;
+    const { updatedTasks, auditedTasks } = hasTaskPositionChanged
+      ? await this.updateTaskPosition(
+          task_id,
+          task_position,
+          task.task_position
+        )
+      : { updatedTasks: [], auditedTasks: [] };
+
+    await this.prismaService.$transaction([
       this.prismaService.task.update({
         data: {
           ...newTask,
-          Column: { connect: { column_id } },
+          task_position,
           TaskAudits: {
-            create: { ...excludeKeys(task, 'created_at', 'task_id') },
+            create: {
+              ...excludeKeys(task, 'created_at', 'task_id', 'column_id'),
+            },
           },
           Subtasks: {
             updateMany: {
@@ -115,7 +129,7 @@ export class TasksService {
               },
             },
             createMany: {
-              data: newSubtasks,
+              data: newSubtasks ?? [],
             },
           },
         },
@@ -132,6 +146,62 @@ export class TasksService {
           where: { subtask_id },
         })
       ),
+      ...updatedTasks.map(({ task_id, task_position }) =>
+        this.prismaService.task.update({
+          data: { task_position },
+          where: { task_id: task_id as string },
+        })
+      ),
+      this.prismaService.taskAudit.createMany({
+        data: auditedTasks,
+      }),
     ]);
+  }
+
+  private async updateTaskPosition(
+    task_id: string,
+    new_task_position: number,
+    current_task_position: number
+  ) {
+    const isMovedUp = new_task_position < current_task_position;
+    const [lowBound, upperBound] = isMovedUp
+      ? [new_task_position, current_task_position]
+      : [current_task_position, new_task_position];
+
+    const tasks = await this.prismaService.task.findMany({
+      where: {
+        task_position: { gte: lowBound, lte: upperBound },
+        task_id: { not: task_id },
+      },
+    });
+    const auditedTasks: Prisma.TaskAuditCreateManyInput[] = tasks.map(
+      (task) => ({
+        ...excludeKeys(task, 'created_at', 'is_deleted', 'column_id'),
+      })
+    );
+    const updatedTasks: Prisma.TaskUpdateInput[] = tasks.map(
+      ({ task_id, task_position }) => ({
+        task_id,
+        task_position: isMovedUp ? ++task_position : --task_position,
+      })
+    );
+    return { updatedTasks, auditedTasks };
+  }
+
+  async delete(task_id: string) {
+    const task = await this.prismaService.task.findUniqueOrThrow({
+      where: { task_id },
+    });
+    await this.prismaService.task.update({
+      data: {
+        is_deleted: true,
+        TaskAudits: {
+          create: {
+            ...excludeKeys(task, 'created_at', 'is_deleted', 'column_id'),
+          },
+        },
+      },
+      where: { task_id },
+    });
   }
 }

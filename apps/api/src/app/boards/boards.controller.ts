@@ -23,7 +23,7 @@ export class BoardsController {
     return await this.boardService.findAll();
   }
 
-  @Get(':board_id')
+  @Get(':board_id/details')
   async getBoard(@Param('board_id') board_id: string) {
     return await this.boardService.findOne(board_id);
   }
