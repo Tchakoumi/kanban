@@ -2,6 +2,7 @@ import { ITask, ITaskDetails } from '@kanban/interfaces';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { excludeKeys } from '../../utils';
+import { CreateTaskDto } from './tasks.dto';
 
 @Injectable()
 export class TasksService {
@@ -46,6 +47,33 @@ export class TasksService {
       subtasks: Subtasks,
       total_done_subtasks,
       total_undone_subtasks,
+      ...excludeKeys(task, 'created_at', 'is_deleted'),
+    };
+  }
+
+  async create({
+    newSubtasks,
+    column_id,
+    ...newTask
+  }: CreateTaskDto): Promise<ITask> {
+    const numberOfTasks = await this.prismaService.task.count({
+      where: { is_deleted: false },
+    });
+    const task = await this.prismaService.task.create({
+      data: {
+        ...newTask,
+        task_position: numberOfTasks + 1,
+        Column: { connect: { column_id } },
+        Subtasks: {
+          createMany: {
+            data: newSubtasks,
+          },
+        },
+      },
+    });
+    return {
+      total_done_subtasks: 0,
+      total_undone_subtasks: 0,
       ...excludeKeys(task, 'created_at', 'is_deleted'),
     };
   }
