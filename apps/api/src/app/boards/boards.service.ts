@@ -46,10 +46,21 @@ export class BoardsService {
     };
   }
 
-  async create(newBoard: CreateBoardDto) {
+  async create({ board_name, newColumns }: CreateBoardDto) {
+    const numberOfColumns = await this.prismaService.column.count();
     const board = await this.prismaService.board.create({
       select: { board_id: true, board_name: true },
-      data: newBoard,
+      data: {
+        board_name,
+        Columns: {
+          createMany: {
+            data: newColumns.map((column) => ({
+              ...column,
+              column_position: numberOfColumns + 1,
+            })),
+          },
+        },
+      },
     });
     return board;
   }

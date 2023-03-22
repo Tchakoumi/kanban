@@ -31,7 +31,7 @@ export class ColumnsService {
     const column = await this.prismaService.column.create({
       data: {
         ...newColumn,
-        column_position: numberOfColumns,
+        column_position: numberOfColumns + 1,
       },
     });
     return excludeKeys(column, 'created_at', 'is_deleted');
