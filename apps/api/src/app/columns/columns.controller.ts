@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateColumnDto, UpdateColumnDto } from './columns.dto';
@@ -19,8 +20,8 @@ export class ColumnsController {
   constructor(private columnsService: ColumnsService) {}
 
   @Get()
-  async getColumns() {
-    return await this.columnsService.findAll();
+  async getColumns(@Query('board_id') board_id: string) {
+    return await this.columnsService.findAll(board_id);
   }
 
   @Get(':column_id')

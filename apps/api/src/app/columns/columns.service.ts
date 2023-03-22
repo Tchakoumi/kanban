@@ -9,9 +9,9 @@ import { CreateColumnDto } from './columns.dto';
 export class ColumnsService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll(): Promise<IColumn[]> {
+  async findAll(board_id: string): Promise<IColumn[]> {
     const columns = await this.prismaService.column.findMany({
-      where: { is_deleted: false },
+      where: { is_deleted: false, board_id },
     });
     return columns.map((column) =>
       excludeKeys(column, 'created_at', 'is_deleted')
