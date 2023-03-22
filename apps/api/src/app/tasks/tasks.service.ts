@@ -18,7 +18,7 @@ export class TasksService {
     return tasks.map(({ Subtasks, ...task }) => {
       const [total_done_subtasks, total_undone_subtasks] = Subtasks.reduce(
         ([totalDone, totalUndone], { is_done }) =>
-          is_done ? [totalDone++, totalUndone] : [totalDone, totalUndone++],
+          is_done ? [++totalDone, totalUndone] : [totalDone, ++totalUndone],
         [0, 0]
       );
       return {
