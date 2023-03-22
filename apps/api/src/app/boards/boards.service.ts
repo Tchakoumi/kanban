@@ -82,4 +82,22 @@ export class BoardsService {
       where: { board_id },
     });
   }
+
+  async delete(board_id: string) {
+    const { board_name } = await this.prismaService.board.findUniqueOrThrow({
+      select: { board_name: true },
+      where: { board_id },
+    });
+    await this.prismaService.board.update({
+      data: {
+        is_deleted: true,
+        BoardAudits: {
+          create: {
+            board_name,
+          },
+        },
+      },
+      where: { board_id },
+    });
+  }
 }

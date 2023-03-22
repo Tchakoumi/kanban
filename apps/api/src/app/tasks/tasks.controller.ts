@@ -57,9 +57,9 @@ export class TasksController {
   }
 
   @Delete(':task_id/delete')
-  async deleteTask(@Param('task_id') task_id: string) {
+  async deleteTask(@Param('task_id') taskId: string) {
     try {
-      return await this.tasksService.delete(task_id);
+      return await this.tasksService.delete(taskId);
     } catch (error) {
       throw new HttpException(
         `Oops! They was an error deleting task: ${error.message}`,
