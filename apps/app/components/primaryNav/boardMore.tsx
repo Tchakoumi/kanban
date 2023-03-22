@@ -6,13 +6,7 @@ import { useActiveBoard } from '../../services';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-export default function BoardMore({
-  disabled,
-  editBoard,
-}: {
-  disabled: boolean;
-  editBoard: () => void;
-}) {
+export default function BoardMore({ disabled }: { disabled: boolean }) {
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const {
@@ -33,6 +27,12 @@ export default function BoardMore({
   function deleteBoard() {
     if (activeBoard) setIsConfirmDeleteBoardDialogOpen(true);
     else alert('No active board');
+  }
+
+  const [isEditBoardDialogOpen, setIsEditBoardDialogOpen] =
+    useState<boolean>(false);
+  function editBoard() {
+    if (activeBoard) setIsEditBoardDialogOpen(true);
   }
 
   return (
