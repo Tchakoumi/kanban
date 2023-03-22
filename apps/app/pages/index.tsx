@@ -17,12 +17,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       {
         board_id: 'sleil',
         board_name: 'Platform Launch',
-        newColumns: [],
       },
       {
         board_id: 'sleisl',
         board_name: 'Platform Launcher',
-        newColumns: [],
       },
     ];
     return {
