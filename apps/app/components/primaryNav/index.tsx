@@ -14,11 +14,9 @@ import { useActiveBoard } from '../../services';
 export default function PrimaryNav({
   isSecondaryNavOpen,
   boards,
-  editBoard,
 }: {
   isSecondaryNavOpen: boolean;
   boards: IBoard[];
-  editBoard: () => void;
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme();
@@ -159,7 +157,7 @@ export default function PrimaryNav({
               </Typography>
             </Button>
           </Tooltip>
-          <BoardMore editBoard={editBoard} disabled={!activeBoard} />
+          <BoardMore disabled={!activeBoard} />
         </Box>
       </Box>
     </Box>
