@@ -44,9 +44,19 @@ export default function BoardMore({
           horizontal: 'center',
         }}
       >
-        <MenuItem onClick={editBoard}>Edit Board</MenuItem>
         <MenuItem
-          onClick={deleteBoard}
+          onClick={() => {
+            closeMenu();
+            editBoard();
+          }}
+        >
+          Edit Board
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            closeMenu();
+            deleteBoard();
+          }}
           sx={{ color: generateTheme().palette.error.main }}
         >
           Delete Board
