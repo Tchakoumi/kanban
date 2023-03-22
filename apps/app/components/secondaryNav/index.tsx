@@ -12,14 +12,10 @@ export default function SecondaryNav({
   isSecondaryNavOpen,
   closeSecondaryNav,
   boards,
-  openBoard,
-  activeBoard,
 }: {
   isSecondaryNavOpen: boolean;
   closeSecondaryNav: () => void;
   boards: IBoard[];
-  openBoard: (board: IBoard) => void;
-  activeBoard?: IBoard;
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
@@ -84,11 +80,7 @@ export default function SecondaryNav({
             rowGap: 2,
           }}
         >
-          <Boards
-            openBoard={openBoard}
-            boards={boards}
-            activeBoard={activeBoard}
-          />
+          <Boards boards={boards} />
           <ThemeSwitcher />
         </Box>
         <Button
