@@ -41,6 +41,10 @@ export interface IColumn extends ICreateColumn {
   column_position: number;
 }
 
+export interface IColumnDetails extends IColumn {
+  tasks: ITask[];
+}
+
 export interface ICreateBoard {
   board_name: string;
   newColumns: ICreateColumn[];
@@ -56,5 +60,5 @@ export interface IBoard extends Omit<ICreateBoard, 'newColumns'> {
 }
 
 export interface IBoardDetails extends IBoard {
-  columns: IColumn[];
+  columns: IColumnDetails[];
 }
