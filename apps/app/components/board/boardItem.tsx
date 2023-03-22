@@ -24,12 +24,29 @@ export default function BoardItem({
       component={Button}
       sx={{
         '&:hover': {
-          backgroundColor: isActive ? theme.palette.primary.dark : '',
+          backgroundColor: isActive
+            ? theme.palette.primary.main
+            : theme.palette.mode === 'light'
+            ? 'rgba(99, 95, 199, 0.1)'
+            : theme.common.white,
+          color: !isActive ? theme.palette.primary.main : '',
+          '& .base': {
+            display: isActive ? 'inline-block' : 'none',
+          },
+          '& .hover': {
+            display: isActive ? 'none' : 'inline-block',
+          },
         },
         backgroundColor: !isActive ? 'none' : theme.palette.primary.main,
         color: colored
           ? 'none'
           : theme.common[!isActive ? 'medium_grey' : 'white'],
+        '& .hover': {
+          display: 'none',
+        },
+        '& .base': {
+          display: 'inline-block',
+        },
         display: 'grid',
         gridTemplateColumns: 'auto 1fr',
         columnGap: 1,
@@ -46,7 +63,9 @@ export default function BoardItem({
       <Image
         src={colored ? ColoredBoardIcon : isActive ? BoardIcon : BoardIconGrey}
         alt="board"
+        className="base"
       />
+      <Image src={ColoredBoardIcon} alt="board" className="hover" />
       <Typography
         sx={{
           overflow: 'hidden',
