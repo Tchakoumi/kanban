@@ -2,7 +2,7 @@ import { ConfirmDialog } from '@kanban/dialog';
 import { IBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { Visibility } from '@mui/icons-material';
-import { Box, Tooltip } from '@mui/material';
+import { Box, Button, Tooltip } from '@mui/material';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -17,12 +17,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       {
         board_id: 'sleil',
         board_name: 'Platform Launch',
-        newColumns: [],
       },
       {
         board_id: 'sleisl',
         board_name: 'Platform Launcher',
-        newColumns: [],
       },
     ];
     return {
@@ -108,6 +106,9 @@ export function Index({ boards }: { boards: IBoard[] }) {
           <Box sx={{ position: 'relative', padding: 3 }}>
             <Tooltip arrow title="Show Sidebar">
               <Box
+                component={Button}
+                variant="contained"
+                color="primary"
                 sx={{
                   position: 'absolute',
                   left: 0,
@@ -115,8 +116,8 @@ export function Index({ boards }: { boards: IBoard[] }) {
                   backgroundColor: theme.palette.primary.main,
                   color: theme.common.white,
                   padding: 1.8125,
-                  borderTopRightRadius: 100,
-                  borderBottomRightRadius: 100,
+                  borderTopLeftRadius: 0,
+                  borderBottomLeftRadius: 0,
                   alignItems: 'center',
                   cursor: 'pointer',
                   display: isSecondaryNavOpen ? 'none' : 'grid',

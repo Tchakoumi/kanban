@@ -13,16 +13,16 @@ export default function SecondaryNav({
   closeSecondaryNav,
   boards,
   openBoard,
-  activeBoard
+  activeBoard,
 }: {
   isSecondaryNavOpen: boolean;
   closeSecondaryNav: () => void;
   boards: IBoard[];
   openBoard: (board: IBoard) => void;
-  activeBoard?: IBoard
+  activeBoard?: IBoard;
 }) {
   const { activeMode } = useMode();
-  const theme = generateTheme();
+  const theme = generateTheme(activeMode);
 
   return (
     <Box
@@ -84,7 +84,11 @@ export default function SecondaryNav({
             rowGap: 2,
           }}
         >
-          <Boards openBoard={openBoard} boards={boards} activeBoard={activeBoard} />
+          <Boards
+            openBoard={openBoard}
+            boards={boards}
+            activeBoard={activeBoard}
+          />
           <ThemeSwitcher />
         </Box>
         <Button
@@ -92,7 +96,18 @@ export default function SecondaryNav({
           variant="text"
           color="inherit"
           onClick={closeSecondaryNav}
-          sx={{ marginBottom: 5.875 }}
+          sx={{
+            marginBottom: 5.875,
+            borderTopLeftRadius: 0,
+            borderBottomLeftRadius: 0,
+            '&:hover': {
+              color: theme.palette.primary.main,
+              backgroundColor:
+                theme.palette.mode === 'dark'
+                  ? theme.common.white
+                  : 'rgba(99, 95, 199, 0.1)',
+            },
+          }}
         >
           Hide Sidebar
         </Button>
