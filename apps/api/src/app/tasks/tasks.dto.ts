@@ -61,7 +61,7 @@ export class EditTaskDto
 
   @IsString()
   @ApiProperty()
-  deletedTaskIds: string[];
+  deletedSubtaskIds: string[];
 
   @IsArray()
   @ApiProperty()

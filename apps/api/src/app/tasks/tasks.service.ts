@@ -2,7 +2,7 @@ import { ITask, ITaskDetails } from '@kanban/interfaces';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { excludeKeys } from '../../utils';
-import { CreateTaskDto } from './tasks.dto';
+import { CreateTaskDto, EditTaskDto } from './tasks.dto';
 
 @Injectable()
 export class TasksService {
@@ -76,5 +76,62 @@ export class TasksService {
       total_undone_subtasks: 0,
       ...excludeKeys(task, 'created_at', 'is_deleted'),
     };
+  }
+
+  async update(
+    task_id: string,
+    {
+      deletedSubtaskIds,
+      updatedSubtasks,
+      newSubtasks,
+      column_id,
+      ...newTask
+    }: EditTaskDto
+  ) {
+    const task = await this.prismaService.task.findUniqueOrThrow({
+      where: { task_id },
+    });
+    const auditedSubtasks = await this.prismaService.subtask.findMany({
+      where: {
+        OR: [
+          ...deletedSubtaskIds,
+          ...updatedSubtasks.map((_) => _.subtask_id),
+        ].map((subtask_id) => ({ subtask_id })),
+      },
+    });
+    return this.prismaService.$transaction([
+      this.prismaService.task.update({
+        data: {
+          ...newTask,
+          Column: { connect: { column_id } },
+          TaskAudits: {
+            create: { ...excludeKeys(task, 'created_at', 'task_id') },
+          },
+          Subtasks: {
+            updateMany: {
+              data: { is_deleted: true },
+              where: {
+                OR: deletedSubtaskIds.map((subtask_id) => ({ subtask_id })),
+              },
+            },
+            createMany: {
+              data: newSubtasks,
+            },
+          },
+        },
+        where: { task_id },
+      }),
+      this.prismaService.subtaskAudit.createMany({
+        data: auditedSubtasks.map((subtask) =>
+          excludeKeys(subtask, 'created_at', 'task_id')
+        ),
+      }),
+      ...updatedSubtasks.map(({ subtask_id, ...newSubtask }) =>
+        this.prismaService.subtask.update({
+          data: newSubtask,
+          where: { subtask_id },
+        })
+      ),
+    ]);
   }
 }
