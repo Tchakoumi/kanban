@@ -8,24 +8,26 @@ import logo_dark from '../../public/logo_dark.png';
 import logo_light from '../../public/logo_light.png';
 import ActiveBoard from './activeBoard';
 import BoardMore from './boardMore';
+import { useRouter } from 'next/router';
+import { useActiveBoard } from '../../services';
 
 export default function PrimaryNav({
   isSecondaryNavOpen,
-  activeBoard,
-  openBoard,
   boards,
   editBoard,
-  deleteBoard,
 }: {
   isSecondaryNavOpen: boolean;
-  activeBoard?: IBoard;
-  openBoard: (board: IBoard) => void;
   boards: IBoard[];
   editBoard: () => void;
-  deleteBoard: () => void;
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme();
+  const {
+    query: { board_id },
+  } = useRouter();
+
+  const { activeBoard } = useActiveBoard(board_id as string);
+
   return (
     <Box
       sx={{
@@ -102,11 +104,7 @@ export default function PrimaryNav({
           }}
           orientation="vertical"
         />
-        <ActiveBoard
-          activeBoard={activeBoard}
-          boards={boards}
-          openBoard={openBoard}
-        />
+        <ActiveBoard boards={boards} />
         <Box
           sx={{
             justifySelf: 'end',
@@ -161,11 +159,7 @@ export default function PrimaryNav({
               </Typography>
             </Button>
           </Tooltip>
-          <BoardMore
-            editBoard={editBoard}
-            deleteBoard={deleteBoard}
-            disabled={!activeBoard}
-          />
+          <BoardMore editBoard={editBoard} disabled={!activeBoard} />
         </Box>
       </Box>
     </Box>
