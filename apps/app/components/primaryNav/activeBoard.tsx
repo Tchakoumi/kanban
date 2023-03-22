@@ -4,25 +4,24 @@ import {
   KeyboardArrowDownOutlined,
   KeyboardArrowUpOutlined,
 } from '@mui/icons-material';
-import { Box, Menu, Typography } from '@mui/material';
+import { Box, Menu, Skeleton, Typography } from '@mui/material';
+import { useActiveBoard } from '../../services';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Boards from '../board/boards';
 import ThemeSwitcher from '../secondaryNav/themeSwitcher';
 
-export default function ActiveBoard({
-  activeBoard,
-  boards,
-  openBoard,
-}: {
-  activeBoard?: IBoard;
-  openBoard: (board: IBoard) => void;
-  boards: IBoard[];
-}) {
+export default function ActiveBoard({ boards }: { boards: IBoard[] }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
+  const {
+    query: { board_id },
+  } = useRouter();
 
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const { activeBoard, isLoading } = useActiveBoard(board_id as string);
 
   function closeMenu() {
     setIsMoreMenuOpen(false);
@@ -56,7 +55,13 @@ export default function ActiveBoard({
             whiteSpace: 'nowrap',
           }}
         >
-          {activeBoard ? activeBoard.board_name : 'Select a board'}
+          {isLoading ? (
+            <Skeleton sx={{ maxWidth: '200px' }} />
+          ) : activeBoard ? (
+            activeBoard.board_name
+          ) : (
+            'Select a board'
+          )}
         </Typography>
         <Box
           sx={{
@@ -90,11 +95,7 @@ export default function ActiveBoard({
         }}
       >
         <Box>
-          <Boards
-            boards={boards}
-            openBoard={openBoard}
-            activeBoard={activeBoard}
-          />
+          <Boards boards={boards} />
           <ThemeSwitcher />
         </Box>
       </Menu>
