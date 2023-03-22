@@ -1,9 +1,9 @@
-import { IColumn } from '@kanban/interfaces';
+import { IColumnDetails } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { AddOutlined } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 
-export default function Columns({ columns }: { columns: IColumn[] }) {
+export default function Columns({ columns }: { columns: IColumnDetails[] }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
 
