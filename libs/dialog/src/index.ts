@@ -1,1 +1,2 @@
-export * from './lib/dialog';
+export * from './confirmDialog';
+export * from './dialog-transition';

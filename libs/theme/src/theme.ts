@@ -86,13 +86,15 @@ declare module '@mui/material/styles' {
 }
 
 const MEDIUM_GREY = '#828FA3';
+const LIGHT_GREY = '#F4F7FD';
+const VERY_DARK_GREY = '#20212C';
 
 export function generateTheme(mode?: ModeType) {
   return createTheme({
     palette: {
       mode,
       background: {
-        default: mode === 'dark' ? 'rgba(43, 44, 55, 1)' : 'white',
+        default: mode === 'dark' ? VERY_DARK_GREY : LIGHT_GREY,
       },
       primary: {
         main: '#635FC7',
@@ -115,10 +117,10 @@ export function generateTheme(mode?: ModeType) {
     common: {
       black: '#000112',
       white: '#FFFFFF',
-      very_dark_grey: '#20212C',
+      very_dark_grey: VERY_DARK_GREY,
       dark_grey: '#2B2C37',
       medium_grey: MEDIUM_GREY,
-      light_grey: '#F4F7FD',
+      light_grey: LIGHT_GREY,
       line_light: '#E4EBFA',
       line_dark: '#3E3F4E',
     },
@@ -176,10 +178,16 @@ export function generateTheme(mode?: ModeType) {
             },
             '&.MuiButton-containedSecondary': {
               color: theme.palette.primary.main,
-              backgroundColor: 'rgba(99, 95, 199, 0.1)',
+              backgroundColor:
+                theme.palette.mode === 'light'
+                  ? 'rgba(99, 95, 199, 0.1)'
+                  : 'white',
             },
             '&.MuiButton-containedSecondary:hover': {
-              backgroundColor: 'rgba(99, 95, 199, 0.25)',
+              backgroundColor:
+                theme.palette.mode === 'light'
+                  ? 'rgba(99, 95, 199, 0.25)'
+                  : 'white',
             },
             '&.MuiButton-containedError:hover': {
               backgroundColor: theme.palette.error.light,
