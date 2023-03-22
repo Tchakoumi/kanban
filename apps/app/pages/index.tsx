@@ -2,9 +2,7 @@ import { ConfirmDialog } from '@kanban/dialog';
 import { IBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { Visibility } from '@mui/icons-material';
-import {
-  Box, Tooltip
-} from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import { GetServerSideProps } from 'next';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -54,7 +52,7 @@ export function Index({ boards }: { boards: IBoard[] }) {
   const [isEditBoardDialogOpen, setIsEditBoardDialogOpen] =
     useState<boolean>(false);
   const [isConfirmDeleteBoardDialogOpen, setIsConfirmDeleteBoardDialogOpen] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   function editBoard() {
     if (activeBoard) setIsEditBoardDialogOpen(true);
