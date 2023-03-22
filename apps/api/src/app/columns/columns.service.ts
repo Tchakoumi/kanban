@@ -50,4 +50,19 @@ export class ColumnsService {
       where: { column_id },
     });
   }
+
+  async delete(column_id: string) {
+    const column = await this.prismaService.column.findUniqueOrThrow({
+      where: { column_id },
+    });
+    await this.prismaService.column.update({
+      data: {
+        is_deleted: true,
+        ColumnAudits: {
+          create: excludeKeys(column, 'created_at', 'column_id', 'board_id'),
+        },
+      },
+      where: { column_id },
+    });
+  }
 }

@@ -59,7 +59,7 @@ export class ColumnsController {
   @Delete(':column_id/delete')
   async deleteColumn(@Param('column_id') columnId: string) {
     try {
-      return await this.columnsService.update(columnId, { is_deleted: true });
+      return await this.columnsService.delete(columnId);
     } catch (error) {
       throw new HttpException(
         `Oops! They was an error deleting column: ${error.message}`,
