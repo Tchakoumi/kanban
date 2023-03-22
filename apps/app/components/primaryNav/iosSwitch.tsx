@@ -6,6 +6,11 @@ export const IOSSwitch = styled((props: SwitchProps) => (
   width: 38,
   height: 22,
   padding: 0,
+  '&:hover': {
+    '& .MuiSwitch-track': {
+      backgroundColor: `${theme.palette.primary.light} !important`,
+    },
+  },
   '& .MuiSwitch-switchBase': {
     padding: 0,
     margin: 2,
@@ -14,7 +19,7 @@ export const IOSSwitch = styled((props: SwitchProps) => (
       transform: 'translateX(16px)',
       color: '#fff',
       '& + .MuiSwitch-track': {
-        backgroundColor: theme.common.dark_grey,
+        backgroundColor: theme.palette.primary.main,
         opacity: 1,
         border: 0,
       },
@@ -23,7 +28,7 @@ export const IOSSwitch = styled((props: SwitchProps) => (
       },
     },
     '&.Mui-focusVisible .MuiSwitch-thumb': {
-      color: '#33cf4d',
+      color: '#fff',
       border: '6px solid #fff',
     },
     '&.Mui-disabled .MuiSwitch-thumb': {
