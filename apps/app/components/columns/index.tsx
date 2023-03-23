@@ -2,6 +2,8 @@ import { IColumnDetails } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { AddOutlined } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
+import { Scrollbars } from 'rc-scrollbars';
+import Column from './column';
 
 export default function Columns({ columns }: { columns: IColumnDetails[] }) {
   const { activeMode } = useMode();
@@ -37,7 +39,49 @@ export default function Columns({ columns }: { columns: IColumnDetails[] }) {
           </Button>
         </Box>
       ) : (
-        'Columns'
+        <Scrollbars autoHide universal>
+          <Box
+            sx={{
+              display: 'grid',
+              gridAutoFlow: 'column',
+              justifyContent: 'start',
+              columnGap: 3,
+              height: '100%',
+            }}
+          >
+            {columns
+              .sort((a, b) => (a.column_position > b.column_position ? 1 : -1))
+              .map((column, index) => (
+                <Column column={column} key={index} />
+              ))}
+            <Box
+              sx={{
+                background:
+                  activeMode === 'light'
+                    ? 'linear-gradient(180deg, #E9EFFA 0%, rgba(233, 239, 250, 0.5) 100%)'
+                    : 'linear-gradient(180deg, rgba(43, 44, 55, 0.25) 0%, rgba(43, 44, 55, 0.125) 100%)',
+                height: '100%',
+                display: 'grid',
+                alignItems: 'center',
+                justifyItems: 'center',
+                width: '280px',
+                marginTop: '39px',
+                borderRadius: '8px',
+              }}
+            >
+              <Typography
+                variant="h1"
+                sx={{
+                  color: theme.common.medium_grey,
+                  cursor: 'pointer',
+                  '&:hover': { color: theme.palette.primary.main },
+                }}
+              >
+                + New Column
+              </Typography>
+            </Box>
+          </Box>
+        </Scrollbars>
       )}
     </Box>
   );
