@@ -33,20 +33,20 @@ export class StatisticsService {
     auditedTasks: { audited_at: Date }[],
     interval: number
   ) {
-    return auditedTasks.reduce<IStatistic[]>((stats, { audited_at }) => {
+    return auditedTasks.reduce<IStatistic[]>((statistics, { audited_at }) => {
       const currentDate = audited_at.getTime();
-      const stat: IStatistic | undefined = stats.find(
+      const statistic: IStatistic | undefined = statistics.find(
         (_) =>
           currentDate >= _.datetime.getTime() &&
           currentDate < _.datetime.getTime() + interval * 60 * 1000
       );
       const newStats =
-        stats.length === 0 || !stat
-          ? [...stats, { datetime: audited_at, count: 1 }]
-          : stats.map((_) =>
-              _.datetime.getTime() === stat.datetime.getTime()
-                ? { datetime: _.datetime, count: _.count + 1 }
-                : _
+        statistics.length === 0 || !statistic
+          ? [...statistics, { datetime: audited_at, count: 1 }]
+          : statistics.map((stat) =>
+              stat.datetime.getTime() === statistic.datetime.getTime()
+                ? { datetime: stat.datetime, count: stat.count + 1 }
+                : stat
             );
       return newStats;
     }, []);
