@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import createEmotionCache from '../config_mui/createEmotionCache';
 import './globalStyles.css';
 import { SWRConfig } from 'swr';
+import { fetcher } from '../services';
 
 interface CustomAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -26,6 +27,7 @@ function CustomApp(props: CustomAppProps) {
         <SWRConfig
           value={{
             refreshInterval: 3000,
+            fetcher,
           }}
         >
           <KanbanThemeProvider>
