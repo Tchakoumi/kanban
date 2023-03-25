@@ -5,11 +5,11 @@ export function useSubtasks(task_id: string) {
   const [data, setData] = useState<{
     subTasks: ISubtask[];
     isLoading: boolean;
-    isError: boolean;
+    error: string | undefined;
   }>({
     subTasks: [],
     isLoading: true,
-    isError: false,
+    error: undefined,
   });
 
   //TODO: call api to load subtasks with data task_id
@@ -29,7 +29,7 @@ export function useSubtasks(task_id: string) {
         },
       ],
       isLoading: false,
-      isError: false,
+      error: undefined,
     });
   }, 3000);
   return data;
