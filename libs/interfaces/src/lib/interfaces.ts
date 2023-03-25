@@ -62,3 +62,11 @@ export interface IBoard extends Omit<ICreateBoard, 'newColumns'> {
 export interface IBoardDetails extends IBoard {
   columns: IColumnDetails[];
 }
+export interface IStatistic {
+  datetime: Date;
+  count: number;
+}
+export interface IStatistics {
+  movedTasksStats: IStatistic[];
+  updatedTaskStats: IStatistic[];
+}

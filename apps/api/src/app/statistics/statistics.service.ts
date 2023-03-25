@@ -1,16 +1,12 @@
+import { IStatistic, IStatistics } from '@kanban/interfaces';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-
-export interface IStatistic {
-  datetime: Date;
-  count: number;
-}
 
 @Injectable()
 export class StatisticsService {
   constructor(private prismaService: PrismaService) {}
 
-  async getMovedTasksStatistics(interval: number) {
+  async getMovedTasksStatistics(interval: number): Promise<IStatistics> {
     let auditedTasks = await this.prismaService.taskAudit.findMany({
       select: { audited_at: true },
       orderBy: { audited_at: 'asc' },
