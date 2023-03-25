@@ -1,9 +1,11 @@
 import { DialogTransition } from '@kanban/dialog';
 import { ISubtask, ITask } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
+import { useNotification } from '@kanban/toast';
 import {
   KeyboardArrowDownOutlined,
   MoreVertOutlined,
+  ReportRounded,
 } from '@mui/icons-material';
 import {
   Box,
@@ -20,8 +22,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { useSubtasks } from '../../services';
-// import { useEffect } from 'react';
+import { useColumns, useSubtasks } from '../../services';
 
 function Subtask({
   subtask: { is_done, subtask_id, subtask_title: title },
@@ -76,28 +77,56 @@ export default function TaskDetailDialog({
     task_title: title,
     task_id,
   },
-  columns,
 }: {
   isDialogOpen: boolean;
   closeDialog: () => void;
   task: ITask;
-  columns: { column_id: string; column_title: string }[];
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
 
-  const { subTasks, isLoading } = useSubtasks(task_id);
+  const {
+    subTasks,
+    isLoading: areSubtasksLoading,
+    error: isError,
+  } = useSubtasks(task_id);
+  const { columns, areColumnsLoading, columnsError } = useColumns(task_id);
+
+  if (columnsError) {
+    const notif = new useNotification();
+    notif.notify({ render: 'Notifying' });
+    notif.update({
+      type: 'ERROR',
+      render: columnsError ?? 'Something went wrong while loading ',
+      autoClose: 3000,
+      icon: () => <ReportRounded fontSize="medium" color="error" />,
+    });
+  }
 
   function changeTaskColumn(new_column_id: string) {
     //TODO: CALL API HERE TO CHANGE TASKS COLUMN ID SENDING IT TO THE LAST POSITION. USE DATA task_id and new_column_id
+    //TODO: MUTATE useBoardDetails
     alert(`moved task "${task_id}" to column "${new_column_id}"`);
   }
 
   function handleCheckSubtask(subtask_id: string, new_status: boolean) {
     //TODO: CALL API HERE TO CHANGE SUBTASKS DONE STATUS
+    //TODO: MUTATE useBoardDetails
     alert(`changed task's done status`);
   }
 
+  if (isError) {
+    const notif = new useNotification();
+    notif.notify({ render: 'Notifying' });
+    notif.update({
+      type: 'ERROR',
+      render: isError ?? 'Something went wrong while loading ',
+      autoClose: 3000,
+      icon: () => <ReportRounded fontSize="medium" color="error" />,
+    });
+  }
+
+  //TODO make change subtask status and change task column disabled during revalidating of useBoardDetails
   return (
     <Dialog
       open={isDialogOpen}
@@ -131,7 +160,7 @@ export default function TaskDetailDialog({
           >{`Subtasks (${2} of ${3})`}</Typography>
 
           <Stack direction="column" spacing={1}>
-            {isLoading
+            {areSubtasksLoading
               ? [...new Array(2)].map((_, index) => (
                   <Skeleton key={index} height={48} />
                 ))
@@ -154,6 +183,7 @@ export default function TaskDetailDialog({
             fullWidth
             size="small"
             value={c_id}
+            disabled={areColumnsLoading}
             onChange={(event) => changeTaskColumn(event.target.value)}
             sx={{ ...theme.typography.caption }}
             input={<OutlinedInput />}
