@@ -8,14 +8,17 @@ export default function Task({
     total_done_subtasks: done,
     total_undone_subtasks: undone,
   },
+  openDetails,
 }: {
   task: ITask;
+  openDetails: () => void;
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
 
   return (
     <Box
+      onClick={openDetails}
       component={Paper}
       elevation={1}
       sx={{
