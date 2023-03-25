@@ -1,7 +1,8 @@
-import { IColumnDetails } from '@kanban/interfaces';
+import { IColumnDetails, ITask } from '@kanban/interfaces';
 import { Box, Typography } from '@mui/material';
-import { CSSProperties } from 'react';
+import { CSSProperties, useState } from 'react';
 import Task from '../task';
+import TaskDetailDialog from '../task/taskDetailDialog';
 
 function ColumnTitle({
   color_code,
@@ -51,24 +52,43 @@ export default function Column({
 }: {
   column: IColumnDetails;
 }) {
+  const [openTask, setOpenTask] = useState<ITask>();
+
   return (
-    <Box
-      sx={{
-        width: '280px',
-        height: '100%',
-        display: 'grid',
-        rowGap: 3,
-        alignContent: 'start',
-      }}
-    >
-      <ColumnTitle color_code={color} title={title} totalTasks={tasks.length} />
-      <Box sx={{ display: 'grid', rowGap: 2.5 }}>
-        {tasks
-          .sort((a, b) => (a.task_position > b.task_position ? 1 : -1))
-          .map((task, index) => (
-            <Task task={task} key={index} />
-          ))}
+    <>
+      {openTask && (
+        <TaskDetailDialog
+          task={openTask}
+          closeDialog={() => setOpenTask(undefined)}
+          isDialogOpen={Boolean(openTask)}
+        />
+      )}
+      <Box
+        sx={{
+          width: '280px',
+          height: '100%',
+          display: 'grid',
+          rowGap: 3,
+          alignContent: 'start',
+        }}
+      >
+        <ColumnTitle
+          color_code={color}
+          title={title}
+          totalTasks={tasks.length}
+        />
+        <Box sx={{ display: 'grid', rowGap: 2.5 }}>
+          {tasks
+            .sort((a, b) => (a.task_position > b.task_position ? 1 : -1))
+            .map((task, index) => (
+              <Task
+                task={task}
+                key={index}
+                openDetails={() => setOpenTask(task)}
+              />
+            ))}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 }
