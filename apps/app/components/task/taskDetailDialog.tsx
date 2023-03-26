@@ -1,5 +1,5 @@
 import { DialogTransition } from '@kanban/dialog';
-import { ISubtask, ITask } from '@kanban/interfaces';
+import { ITask } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { useNotification } from '@kanban/toast';
 import {
@@ -9,11 +9,9 @@ import {
 } from '@mui/icons-material';
 import {
   Box,
-  Checkbox,
   Dialog,
   FormControl,
   IconButton,
-  lighten,
   MenuItem,
   OutlinedInput,
   Select,
@@ -24,51 +22,8 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useColumns, useSubtasks } from '../../services';
+import Subtask from './subtask';
 import TaskMore from './taskMore';
-
-function Subtask({
-  subtask: { is_done, subtask_id, subtask_title: title },
-  handleCheckSubtask,
-}: {
-  subtask: ISubtask;
-  handleCheckSubtask: (new_status: boolean) => void;
-}) {
-  const { activeMode } = useMode();
-  const theme = generateTheme(activeMode);
-
-  return (
-    <Stack
-      direction="row"
-      spacing={1}
-      alignItems="center"
-      sx={{
-        backgroundColor: theme.common.light_grey,
-        borderRadius: '4px',
-        '&:hover': {
-          backgroundColor: !is_done
-            ? lighten(theme.palette.primary.main, 0.25)
-            : '',
-        },
-      }}
-      component="label"
-    >
-      <Checkbox
-        color="primary"
-        onChange={(event) => handleCheckSubtask(event.target.checked)}
-        checked={is_done}
-      />
-      <Typography
-        variant="h3"
-        sx={{
-          textDecoration: is_done ? 'line-through' : 'none',
-          color: is_done ? theme.common.medium_grey : theme.common.black,
-        }}
-      >
-        {title}
-      </Typography>
-    </Stack>
-  );
-}
 
 export default function TaskDetailDialog({
   isDialogOpen,
@@ -156,7 +111,14 @@ export default function TaskDetailDialog({
         onClose={closeDialog}
       >
         <Box
-          sx={{ width: '480px', padding: '32px', display: 'grid', rowGap: 3 }}
+          sx={{
+            backgroundColor:
+              theme.palette.mode === 'dark' ? theme.common.dark_grey : '',
+            width: '480px',
+            padding: '32px',
+            display: 'grid',
+            rowGap: 3,
+          }}
         >
           <Box
             sx={{
