@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from 'axios';
 
 export function getAxiosInstance(): AxiosInstance {
   const axiosInstance = axios.create({
-    baseURL: process.env['NX_API_BASE_URL'] || 'https://api-hh.ingl.io',
+    baseURL: process.env['NX_API_BASE_URL'] || 'http://localhost:4000/api',
   });
   axiosInstance.interceptors.request.use(
     (request) => {

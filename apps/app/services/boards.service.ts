@@ -3,8 +3,7 @@
 import { IBoard, IColumn } from '@kanban/interfaces';
 import { useState } from 'react';
 
-// import useSWR from 'swr';
-// import {fetcher} from '.';
+import useSWR from 'swr';
 
 export function useActiveBoard(board_id: string) {
   const [data, setData] = useState<{
@@ -83,4 +82,8 @@ export function useColumns(board_id: string): {
     });
   }, 3000);
   return data;
+}
+
+export function useBoards() {
+  return useSWR<IBoard[]>(`/boards`);
 }
