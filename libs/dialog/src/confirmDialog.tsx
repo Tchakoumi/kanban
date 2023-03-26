@@ -2,9 +2,10 @@ import { generateTheme } from '@kanban/theme';
 import {
   Box,
   Button,
-  Dialog, DialogContent,
+  Dialog,
+  DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
 } from '@mui/material';
 import { DialogTransition } from './dialog-transition';
 
@@ -74,6 +75,7 @@ export function ConfirmDialog({
             confirm();
             closeDialog();
           }}
+          disableElevation
         >
           {confirmButton}
         </Button>
@@ -82,6 +84,7 @@ export function ConfirmDialog({
           color={danger ? 'secondary' : 'error'}
           variant={danger ? 'contained' : 'text'}
           onClick={closeDialog}
+          disableElevation
         >
           Cancel
         </Button>
