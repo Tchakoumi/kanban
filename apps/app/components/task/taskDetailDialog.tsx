@@ -20,6 +20,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useColumns, useSubtasks } from '../../services';
 import Subtask from './subtask';
@@ -43,6 +44,9 @@ export default function TaskDetailDialog({
   handleEdit: () => void;
   handleDelete: () => void;
 }) {
+  const {
+    query: { board_id },
+  } = useRouter();
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
 
@@ -51,7 +55,9 @@ export default function TaskDetailDialog({
     isLoading: areSubtasksLoading,
     error: isError,
   } = useSubtasks(task_id);
-  const { columns, areColumnsLoading, columnsError } = useColumns(task_id);
+  const { columns, areColumnsLoading, columnsError } = useColumns(
+    String(board_id)
+  );
 
   if (columnsError) {
     const notif = new useNotification();
@@ -114,7 +120,10 @@ export default function TaskDetailDialog({
           sx={{
             backgroundColor:
               theme.palette.mode === 'dark' ? theme.common.dark_grey : '',
-            width: '480px',
+            width: {
+              mobile: 'initial',
+              tablet: '480px',
+            },
             padding: '32px',
             display: 'grid',
             rowGap: 3,
