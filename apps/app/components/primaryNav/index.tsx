@@ -1,6 +1,6 @@
 import { IBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
-import { AddOutlined } from '@mui/icons-material';
+import { AddOutlined, ReportRounded } from '@mui/icons-material';
 import { Box, Button, Divider, Tooltip, Typography } from '@mui/material';
 import Image from 'next/image';
 import favicon from '../../public/favicon_colored.png';
@@ -9,7 +9,8 @@ import logo_light from '../../public/logo_light.png';
 import ActiveBoard from './activeBoard';
 import BoardMore from './boardMore';
 import { useRouter } from 'next/router';
-import { useActiveBoard } from '../../services';
+import { useActiveBoard, useColumns } from '../../services';
+import { useNotification } from '@kanban/toast';
 
 export default function PrimaryNav({
   isSecondaryNavOpen,
@@ -25,6 +26,20 @@ export default function PrimaryNav({
   } = useRouter();
 
   const { activeBoard } = useActiveBoard(board_id as string);
+  const { columns, areColumnsLoading, columnsError } = useColumns(
+    String(board_id)
+  );
+
+  if (columnsError) {
+    const notif = new useNotification();
+    notif.notify({ render: 'Notifying' });
+    notif.update({
+      type: 'ERROR',
+      render: columnsError ?? 'Something went wrong while loading columns ',
+      autoClose: 3000,
+      icon: () => <ReportRounded fontSize="medium" color="error" />,
+    });
+  }
 
   return (
     <Box
@@ -125,7 +140,7 @@ export default function PrimaryNav({
             <Button
               color="primary"
               variant="contained"
-              disabled={!activeBoard}
+              disabled={areColumnsLoading || columns.length === 0}
               startIcon={<AddOutlined />}
               sx={{
                 '&:disabled': {
