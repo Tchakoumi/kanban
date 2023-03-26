@@ -1,4 +1,7 @@
+import { ConfirmDialog } from '@kanban/dialog';
 import { IColumnDetails, ITask } from '@kanban/interfaces';
+import { ErrorMessage, useNotification } from '@kanban/toast';
+import { ReportRounded } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { CSSProperties, useState } from 'react';
 import Task from '../task';
@@ -52,17 +55,94 @@ export default function Column({
 }: {
   column: IColumnDetails;
 }) {
+  const [isTaskDetailDailogOpen, setIsTaskDetailDialogOpen] =
+    useState<boolean>(false);
   const [openTask, setOpenTask] = useState<ITask>();
+
+  const [isConfirmDeleteTaskDialogOpen, setIsConfirmDeleteTaskDialogOpen] =
+    useState<boolean>(false);
+
+  const [isEditBoardDialogOpen, setIsEditBoardDialogOpen] =
+    useState<boolean>(false);
+
+  const [actionnedTask, setActionnedTask] = useState<string>();
+  const [submissionNotif, setSubmissionNotif] = useState<useNotification>();
+
+  function deleteTask(task_id: string) {
+    setActionnedTask(task_id);
+    const notif = new useNotification();
+    if (submissionNotif) {
+      submissionNotif.dismiss();
+    }
+    setSubmissionNotif(notif);
+    notif.notify({
+      render: 'Deleting task...',
+    });
+    setTimeout(() => {
+      //TODO: CALL API HERE TO delete task
+      // eslint-disable-next-line no-constant-condition
+      if (5 > 4) {
+        notif.update({
+          render: 'Task Deleted',
+        });
+        setSubmissionNotif(undefined);
+      } else {
+        notif.update({
+          type: 'ERROR',
+          render: (
+            <ErrorMessage
+              retryFunction={() => deleteTask(task_id)}
+              notification={notif}
+              //TODO: message should come from backend
+              message={
+                'Something went wrong while deleting task. Please try again!!!'
+              }
+            />
+          ),
+          autoClose: 2000,
+          icon: () => <ReportRounded fontSize="medium" color="error" />,
+        });
+      }
+      setActionnedTask(undefined);
+    }, 3000);
+
+    //TODO: MUTATE useBoardDetails
+  }
 
   return (
     <>
       {openTask && (
-        <TaskDetailDialog
-          task={openTask}
-          closeDialog={() => setOpenTask(undefined)}
-          isDialogOpen={Boolean(openTask)}
-        />
+        <>
+          <TaskDetailDialog
+            task={openTask}
+            closeDialog={() => setIsTaskDetailDialogOpen(false)}
+            isDialogOpen={isTaskDetailDailogOpen}
+            handleDelete={() => {
+              setIsTaskDetailDialogOpen(false);
+              setIsConfirmDeleteTaskDialogOpen(true);
+            }}
+            handleEdit={() => {
+              setIsTaskDetailDialogOpen(false);
+              setIsEditBoardDialogOpen(true);
+            }}
+          />
+          <ConfirmDialog
+            closeDialog={() => {
+              setOpenTask(undefined);
+              setIsConfirmDeleteTaskDialogOpen(false);
+            }}
+            dialogMessage={`Are you sure you want to delete the " ${openTask.task_title} " task and its subtasks? This action cannot be reversed.`}
+            isDialogOpen={isConfirmDeleteTaskDialogOpen}
+            confirmButton="Delete"
+            danger
+            dialogTitle="Delete this task?"
+            confirm={() => {
+              deleteTask(openTask.task_id);
+            }}
+          />
+        </>
       )}
+
       <Box
         sx={{
           width: '280px',
@@ -84,7 +164,14 @@ export default function Column({
               <Task
                 task={task}
                 key={index}
-                openDetails={() => setOpenTask(task)}
+                openDetails={
+                  actionnedTask === task.task_id
+                    ? null
+                    : () => {
+                        setIsTaskDetailDialogOpen(true);
+                        setOpenTask(task);
+                      }
+                }
               />
             ))}
         </Box>
