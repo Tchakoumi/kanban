@@ -22,7 +22,9 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import { useState } from 'react';
 import { useColumns, useSubtasks } from '../../services';
+import TaskMore from './taskMore';
 
 function Subtask({
   subtask: { is_done, subtask_id, subtask_title: title },
@@ -77,10 +79,14 @@ export default function TaskDetailDialog({
     task_title: title,
     task_id,
   },
+  handleEdit,
+  handleDelete,
 }: {
   isDialogOpen: boolean;
   closeDialog: () => void;
   task: ITask;
+  handleEdit: () => void;
+  handleDelete: () => void;
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
@@ -126,91 +132,119 @@ export default function TaskDetailDialog({
     });
   }
 
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  function closeMenu() {
+    setIsMoreMenuOpen(false);
+    setAnchorEl(null);
+  }
+
   //TODO make change subtask status and change task column disabled during revalidating of useBoardDetails
   return (
-    <Dialog
-      open={isDialogOpen}
-      TransitionComponent={DialogTransition}
-      onClose={closeDialog}
-    >
-      <Box sx={{ width: '480px', padding: '32px', display: 'grid', rowGap: 3 }}>
+    <>
+      <TaskMore
+        anchorEl={anchorEl}
+        closeMenu={closeMenu}
+        handleDelete={handleDelete}
+        handleEdit={handleEdit}
+        isMenuOpen={isMoreMenuOpen}
+      />
+      <Dialog
+        open={isDialogOpen}
+        TransitionComponent={DialogTransition}
+        onClose={closeDialog}
+      >
         <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto',
-            columnGap: 3,
-            alignItems: 'center',
-          }}
+          sx={{ width: '480px', padding: '32px', display: 'grid', rowGap: 3 }}
         >
-          <Typography variant="h2">{title}</Typography>
-          <Tooltip arrow title="More">
-            <IconButton size="small">
-              <MoreVertOutlined />
-            </IconButton>
-          </Tooltip>
-        </Box>
-        <Typography variant="caption" sx={{ color: theme.common.medium_grey }}>
-          {description}
-        </Typography>
-
-        <Stack direction="column" spacing={2}>
-          <Typography
-            variant="h3"
-            sx={{ color: theme.common.medium_grey }}
-          >{`Subtasks (${2} of ${3})`}</Typography>
-
-          <Stack direction="column" spacing={1}>
-            {areSubtasksLoading
-              ? [...new Array(2)].map((_, index) => (
-                  <Skeleton key={index} height={48} />
-                ))
-              : subTasks.map((subtask, index) => (
-                  <Subtask
-                    subtask={subtask}
-                    key={index}
-                    handleCheckSubtask={(status) =>
-                      handleCheckSubtask(subtask.subtask_id, status)
-                    }
-                  />
-                ))}
-          </Stack>
-        </Stack>
-
-        <FormControl>
-          <Select
-            displayEmpty
-            IconComponent={KeyboardArrowDownOutlined}
-            fullWidth
-            size="small"
-            value={c_id}
-            disabled={areColumnsLoading}
-            onChange={(event) => changeTaskColumn(event.target.value)}
-            sx={{ ...theme.typography.caption }}
-            input={<OutlinedInput />}
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: 48 * 4.5 + 8,
-                  width: 250,
-                },
-              },
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr auto',
+              columnGap: 3,
+              alignItems: 'center',
             }}
           >
-            {columns.map(({ column_id, column_title }, index) => (
-              <MenuItem
-                key={index}
-                value={column_id}
-                sx={{
-                  ...theme.typography.caption,
-                  color: theme.common.medium_grey,
+            <Typography variant="h2">{title}</Typography>
+            <Tooltip arrow title="More">
+              <IconButton
+                size="small"
+                onClick={(event) => {
+                  setIsMoreMenuOpen(true);
+                  setAnchorEl(event.currentTarget);
                 }}
               >
-                {column_title}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-    </Dialog>
+                <MoreVertOutlined />
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <Typography
+            variant="caption"
+            sx={{ color: theme.common.medium_grey }}
+          >
+            {description}
+          </Typography>
+
+          <Stack direction="column" spacing={2}>
+            <Typography
+              variant="h3"
+              sx={{ color: theme.common.medium_grey }}
+            >{`Subtasks (${2} of ${3})`}</Typography>
+
+            <Stack direction="column" spacing={1}>
+              {areSubtasksLoading
+                ? [...new Array(2)].map((_, index) => (
+                    <Skeleton key={index} height={48} />
+                  ))
+                : subTasks.map((subtask, index) => (
+                    <Subtask
+                      subtask={subtask}
+                      key={index}
+                      handleCheckSubtask={(status) =>
+                        handleCheckSubtask(subtask.subtask_id, status)
+                      }
+                    />
+                  ))}
+            </Stack>
+          </Stack>
+
+          <FormControl>
+            <Select
+              displayEmpty
+              IconComponent={KeyboardArrowDownOutlined}
+              fullWidth
+              size="small"
+              value={c_id}
+              disabled={areColumnsLoading}
+              onChange={(event) => changeTaskColumn(event.target.value)}
+              sx={{ ...theme.typography.caption }}
+              input={<OutlinedInput />}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 48 * 4.5 + 8,
+                    width: 250,
+                  },
+                },
+              }}
+            >
+              {columns.map(({ column_id, column_title }, index) => (
+                <MenuItem
+                  key={index}
+                  value={column_id}
+                  sx={{
+                    ...theme.typography.caption,
+                    color: theme.common.medium_grey,
+                  }}
+                >
+                  {column_title}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      </Dialog>
+    </>
   );
 }
