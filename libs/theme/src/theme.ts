@@ -168,6 +168,18 @@ export function generateTheme(mode?: ModeType) {
       },
     },
     components: {
+      MuiMenu: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            '& .MuiMenu-paper': {
+              background:
+                theme.palette.mode === 'dark'
+                  ? theme.common.very_dark_grey
+                  : '',
+            },
+          }),
+        },
+      },
       MuiButton: {
         styleOverrides: {
           root: ({ theme }) => ({
