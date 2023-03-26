@@ -77,6 +77,10 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
             closeMenu();
             editBoard();
           }}
+          sx={{
+            ...generateTheme().typography.caption,
+            color: generateTheme().common.medium_grey,
+          }}
         >
           Edit Board
         </MenuItem>
@@ -85,7 +89,10 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
             closeMenu();
             deleteBoard();
           }}
-          sx={{ color: generateTheme().palette.error.main }}
+          sx={{
+            color: generateTheme().palette.error.main,
+            ...generateTheme().typography.caption,
+          }}
         >
           Delete Board
         </MenuItem>
