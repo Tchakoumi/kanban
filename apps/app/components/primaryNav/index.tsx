@@ -78,7 +78,7 @@ export default function PrimaryNav({
               }
             />
           ),
-          autoClose: 2000,
+          autoClose: 5000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
       }
