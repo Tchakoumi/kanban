@@ -17,7 +17,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
     query: { board_id },
   } = useRouter();
 
-  const { activeBoard } = useActiveBoard(board_id as string);
+  const { data: activeBoard } = useActiveBoard(board_id as string);
 
   function closeMenu() {
     setIsMoreMenuOpen(false);

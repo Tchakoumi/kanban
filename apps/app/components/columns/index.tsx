@@ -15,9 +15,11 @@ export default function Columns() {
     query: { board_id },
   } = useRouter();
 
-  const { areColumnsLoading, boardDetails, columnsError } = useBoardDetails(
-    String(board_id)
-  );
+  const {
+    isLoading: areColumnsLoading,
+    data: boardDetails,
+    error: columnsError,
+  } = useBoardDetails(String(board_id));
 
   useEffect(() => {
     if (columnsError) {

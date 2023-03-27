@@ -35,9 +35,11 @@ export default function ManageBoardDialog({
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
 
-  const { columns, areColumnsLoading, columnsError } = useColumns(
-    String(board_id)
-  );
+  const {
+    data: columns,
+    error: columnsError,
+    isLoading: areColumnsLoading,
+  } = useColumns(String(board_id));
 
   if (columnsError) {
     const notif = new useNotification();

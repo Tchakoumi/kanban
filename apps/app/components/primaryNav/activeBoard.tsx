@@ -1,7 +1,7 @@
 import { generateTheme, useMode } from '@kanban/theme';
 import {
   KeyboardArrowDownOutlined,
-  KeyboardArrowUpOutlined
+  KeyboardArrowUpOutlined,
 } from '@mui/icons-material';
 import { Box, Menu, Skeleton, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
@@ -20,7 +20,7 @@ export default function ActiveBoard() {
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const { activeBoard, isLoading } = useActiveBoard(board_id as string);
+  const { data: activeBoard, isLoading } = useActiveBoard(board_id as string);
 
   function closeMenu() {
     setIsMoreMenuOpen(false);
