@@ -85,6 +85,7 @@ export default function Column({
       if (5 > 4) {
         notif.update({
           render: 'Task Deleted',
+          autoClose: 2000
         });
         setSubmissionNotif(undefined);
       } else {
@@ -100,7 +101,7 @@ export default function Column({
               }
             />
           ),
-          autoClose: 2000,
+          autoClose: 5000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
       }
@@ -118,7 +119,7 @@ export default function Column({
     }
     setSubmissionNotif(notif);
     notif.notify({
-      render: 'Saving task...',
+      render: 'Saving task modifications...',
     });
     setTimeout(() => {
       //TODO: CALL API HERE TO edit task with data val
@@ -126,6 +127,7 @@ export default function Column({
       if (5 > 4) {
         notif.update({
           render: 'Task saved!',
+          autoClose: 2000
         });
         setSubmissionNotif(undefined);
       } else {
@@ -141,7 +143,7 @@ export default function Column({
               }
             />
           ),
-          autoClose: 2000,
+          autoClose: 5000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
       }
