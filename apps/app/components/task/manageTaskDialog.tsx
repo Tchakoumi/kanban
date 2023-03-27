@@ -44,9 +44,11 @@ export default function ManageTaskDialog({
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
 
-  const { columns, areColumnsLoading, columnsError } = useColumns(
-    String(board_id)
-  );
+  const {
+    data: columns,
+    error: columnsError,
+    isLoading: areColumnsLoading,
+  } = useColumns(String(board_id));
 
   if (columnsError) {
     const notif = new useNotification();
@@ -90,7 +92,7 @@ export default function ManageTaskDialog({
         task_id: editableTask.task_id,
         deletedSubtaskIds,
         updatedSubtasks,
-        newTasks: subtasks
+        newSubtasks: subtasks
           .filter(
             ({ subtask_id: s_id }) =>
               !subTasks.find(({ subtask_id: st_id }) => st_id === s_id)
@@ -112,7 +114,6 @@ export default function ManageTaskDialog({
   } = useSubtasks(editableTask ? editableTask.task_id : '');
 
   if (subtaskError) {
-    //TODO: THE BELOW ERROR COMES FROM BACKEND WHEN THE STRING IS EMPTY.
     if (subtaskError !== 'errorForEmptyStringTaskId') {
       const notif = new useNotification();
       notif.notify({ render: 'Notifying' });

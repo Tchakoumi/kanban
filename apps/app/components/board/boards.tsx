@@ -5,7 +5,7 @@ import { ReportRounded } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useActiveBoard, useBoards } from '../../services';
+import { createNewBoard, useActiveBoard, useBoards } from '../../services';
 import BoardItem from './boardItem';
 import ManageBoardDialog from './manageBoardDialog';
 
@@ -17,7 +17,11 @@ export default function Boards() {
     query: { board_id },
   } = useRouter();
 
-  const { activeBoard, isLoading, isError } = useActiveBoard(String(board_id));
+  const {
+    data: activeBoard,
+    isLoading,
+    error: isError,
+  } = useActiveBoard(String(board_id));
 
   if (isError) {
     const notif = new useNotification();
@@ -32,7 +36,12 @@ export default function Boards() {
     });
   }
 
-  const { data: boards, isLoading: areBoardsLoading, error } = useBoards();
+  const {
+    data: boards,
+    isLoading: areBoardsLoading,
+    error,
+    mutate,
+  } = useBoards();
 
   useEffect(() => {
     if (error) {
@@ -52,7 +61,7 @@ export default function Boards() {
 
   const [submissionNotif, setSubmissionNotif] = useState<useNotification>();
 
-  function createBoard(val: ICreateBoard) {
+  function createBoardHandler(val: ICreateBoard) {
     const notif = new useNotification();
     if (submissionNotif) {
       submissionNotif.dismiss();
@@ -61,24 +70,24 @@ export default function Boards() {
     notif.notify({
       render: 'Creating new board...',
     });
-    setTimeout(() => {
-      //TODO: CALL API HERE TO create board with data val
-      // eslint-disable-next-line no-constant-condition
-      if (5 > 4) {
+    createNewBoard(val)
+      .then(() => {
+        mutate();
         notif.update({
           render: 'Board created!',
           autoClose: 2000,
         });
         setSubmissionNotif(undefined);
-      } else {
+      })
+      .catch((error) => {
         notif.update({
           type: 'ERROR',
           render: (
             <ErrorMessage
-              retryFunction={() => createBoard(val)}
+              retryFunction={() => createBoardHandler(val)}
               notification={notif}
-              //TODO: message should come from backend
               message={
+                error?.message ||
                 'Something went wrong while creating board. Please try again!!!'
               }
             />
@@ -86,10 +95,7 @@ export default function Boards() {
           autoClose: 2000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
-      }
-    }, 3000);
-
-    //TODO: MUTATE useBoard
+      });
   }
 
   return (
@@ -97,7 +103,7 @@ export default function Boards() {
       <ManageBoardDialog
         closeDialog={() => setIsCreateBoardDialogOpen(false)}
         isDialogOpen={isCreateBoardDialogOpen}
-        submitDialog={createBoard}
+        submitDialog={createBoardHandler}
       />
       <Box sx={{ display: 'grid', rowGap: 1 }}>
         <Typography
