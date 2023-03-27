@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
+import { CreateTaskDto, UpdateSubtaskDto, UpdateTaskDto } from './tasks.dto';
 import { TasksService } from './tasks.service';
 
 @ApiTags('Tasks')
@@ -60,6 +60,18 @@ export class TasksController {
   async deleteTask(@Param('task_id') taskId: string) {
     try {
       return await this.tasksService.delete(taskId);
+    } catch (error) {
+      throw new HttpException(
+        `Oops! They was an error deleting task: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Put('subtasks/edit')
+  async updateSubtasks(@Body() updateData: UpdateSubtaskDto) {
+    try {
+      return await this.tasksService.updateSubtask(updateData);
     } catch (error) {
       throw new HttpException(
         `Oops! They was an error deleting task: ${error.message}`,

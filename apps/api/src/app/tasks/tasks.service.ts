@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { excludeKeys } from '../../utils';
-import { CreateTaskDto, UpdateTaskDto } from './tasks.dto';
+import { CreateTaskDto, UpdateSubtaskDto, UpdateTaskDto } from './tasks.dto';
 
 @Injectable()
 export class TasksService {
@@ -202,6 +202,21 @@ export class TasksService {
         },
       },
       where: { task_id },
+    });
+  }
+
+  async updateSubtask({
+    subtask_id,
+    is_done,
+    subtask_title,
+  }: UpdateSubtaskDto) {
+    const subtask = await this.prismaService.subtask.findUniqueOrThrow({
+      select: { is_done: true, subtask_title: true },
+      where: { subtask_id },
+    });
+    await this.prismaService.subtask.update({
+      data: { is_done, subtask_title, SubtaskAudits: { create: subtask } },
+      where: { subtask_id },
     });
   }
 }

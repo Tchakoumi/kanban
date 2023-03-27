@@ -50,7 +50,7 @@ export class UpdateSubtaskDto extends PartialType(CreateSubtaskDto) {
 
 export class UpdateTaskDto
   extends PartialType(CreateTaskDto)
-  implements IEditTask
+  implements Omit<IEditTask, 'task_id'>
 {
   @IsNumber()
   @IsOptional()
