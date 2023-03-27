@@ -63,11 +63,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         column_title: 'To-Do',
         tasks: [
           {
-            column_id: 'soielsi',
+            column_id: 'ieowldo',
             task_description: 'make things happen',
             task_id: 'wieosl',
             task_position: 3,
-            task_title: 'Taking it one step at a time',
+            task_title: 'Hello world',
             total_done_subtasks: 3,
             total_undone_subtasks: 0,
           },
