@@ -9,7 +9,7 @@ import { useState } from 'react';
 import favicon from '../../public/favicon_colored.png';
 import logo_dark from '../../public/logo_dark.png';
 import logo_light from '../../public/logo_light.png';
-import { useActiveBoard, useColumns } from '../../services';
+import { createNewTask, useBoardDetails, useColumns } from '../../services';
 import ManageTaskDialog from '../task/manageTaskDialog';
 import ActiveBoard from './activeBoard';
 import BoardMore from './boardMore';
@@ -24,11 +24,13 @@ export default function PrimaryNav({
   const {
     query: { board_id },
   } = useRouter();
+  const { data: activeBoard, mutate } = useBoardDetails(board_id as string);
 
-  const { activeBoard } = useActiveBoard(board_id as string);
-  const { columns, areColumnsLoading, columnsError } = useColumns(
-    String(board_id)
-  );
+  const {
+    data: columns,
+    error: columnsError,
+    isLoading: areColumnsLoading,
+  } = useColumns(String(board_id));
 
   if (columnsError) {
     const notif = new useNotification();
@@ -54,24 +56,24 @@ export default function PrimaryNav({
     notif.notify({
       render: 'Creating task...',
     });
-    setTimeout(() => {
-      //TODO: CALL API HERE TO create task with data task
-      // eslint-disable-next-line no-constant-condition
-      if (5 > 4) {
+    createNewTask(task)
+      .then(() => {
+        mutate();
         notif.update({
           render: 'Task Created',
           autoClose: 2000,
         });
         setSubmissionNotif(undefined);
-      } else {
+      })
+      .catch((error) => {
         notif.update({
           type: 'ERROR',
           render: (
             <ErrorMessage
               retryFunction={() => createTask(task)}
               notification={notif}
-              //TODO: message should come from backend
               message={
+                error?.message ||
                 'Something went wrong while creating task. Please try again!!!'
               }
             />
@@ -79,10 +81,7 @@ export default function PrimaryNav({
           autoClose: 5000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
-      }
-    }, 3000);
-
-    //TODO: MUTATE useBoardDetails
+      });
   }
 
   return (
