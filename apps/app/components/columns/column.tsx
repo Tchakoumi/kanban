@@ -1,10 +1,11 @@
 import { ConfirmDialog } from '@kanban/dialog';
-import { IColumnDetails, ITask } from '@kanban/interfaces';
+import { IColumnDetails, IEditTask, ITask } from '@kanban/interfaces';
 import { ErrorMessage, useNotification } from '@kanban/toast';
 import { ReportRounded } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { CSSProperties, useState } from 'react';
 import Task from '../task';
+import ManageTaskDialog from '../task/manageTaskDialog';
 import TaskDetailDialog from '../task/taskDetailDialog';
 
 function ColumnTitle({
@@ -109,10 +110,57 @@ export default function Column({
     //TODO: MUTATE useBoardDetails
   }
 
+  function editTask(val: IEditTask) {
+    setActionnedTask(val.task_id);
+    const notif = new useNotification();
+    if (submissionNotif) {
+      submissionNotif.dismiss();
+    }
+    setSubmissionNotif(notif);
+    notif.notify({
+      render: 'Saving task...',
+    });
+    setTimeout(() => {
+      //TODO: CALL API HERE TO edit task with data val
+      // eslint-disable-next-line no-constant-condition
+      if (5 > 4) {
+        notif.update({
+          render: 'Task saved!',
+        });
+        setSubmissionNotif(undefined);
+      } else {
+        notif.update({
+          type: 'ERROR',
+          render: (
+            <ErrorMessage
+              retryFunction={() => editTask(val)}
+              notification={notif}
+              //TODO: message should come from backend
+              message={
+                'Something went wrong while saving task. Please try again!!!'
+              }
+            />
+          ),
+          autoClose: 2000,
+          icon: () => <ReportRounded fontSize="medium" color="error" />,
+        });
+      }
+      setActionnedTask(undefined);
+    }, 3000);
+
+    //TODO: MUTATE useBoardDetails
+  }
+
   return (
     <>
       {openTask && (
         <>
+          <ManageTaskDialog
+            closeDialog={() => setIsEditBoardDialogOpen(false)}
+            isDialogOpen={isEditBoardDialogOpen}
+            submitDialog={editTask}
+            editableTask={openTask}
+          />
           <TaskDetailDialog
             task={openTask}
             closeDialog={() => setIsTaskDetailDialogOpen(false)}
