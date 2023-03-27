@@ -23,9 +23,14 @@ export class BoardsController {
     return await this.boardService.findAll();
   }
 
-  @Get(':board_id/details')
+  @Get(':board_id')
   async getBoard(@Param('board_id') board_id: string) {
     return await this.boardService.findOne(board_id);
+  }
+
+  @Get(':board_id/details')
+  async getBoardDetails(@Param('board_id') board_id: string) {
+    return await this.boardService.findOneWithChildren(board_id);
   }
 
   @Post('new')
