@@ -1,6 +1,6 @@
 //TODO: FILE TO WORK IN
 
-import { IBoard, IColumn } from '@kanban/interfaces';
+import { IBoard, IBoardDetails, IColumn } from '@kanban/interfaces';
 import { useState } from 'react';
 
 import useSWR from 'swr';
@@ -33,11 +33,55 @@ export function useActiveBoard(board_id: string) {
   return data;
 }
 
-export function useColumns(board_id: string): {
-  columns: IColumn[];
+export function useBoardDetails(board_id: string): {
+  boardDetails: IBoardDetails;
   areColumnsLoading: boolean;
   columnsError: string | undefined;
 } {
+  const [data, setData] = useState<{
+    boardDetails: IBoardDetails;
+    areColumnsLoading: boolean;
+    columnsError: string | undefined;
+  }>({
+    boardDetails: {
+      columns: [],
+      board_id,
+      board_name: 'Making things work',
+    },
+    areColumnsLoading: true,
+    columnsError: undefined,
+  });
+
+  if (board_id === undefined)
+    return {
+      boardDetails: {
+        columns: [],
+        board_id,
+        board_name: 'Making things work',
+      },
+      areColumnsLoading: false,
+      columnsError: 'board_id cannot be undefined.',
+    };
+
+  setTimeout(() => {
+    setData({
+      boardDetails: {
+        board_id,
+        board_name: 'Make things work',
+        columns: [],
+      },
+      areColumnsLoading: false,
+      columnsError: undefined,
+    });
+  }, 3000);
+  return data;
+}
+
+export function useBoards() {
+  return useSWR<IBoard[]>(`/boards`);
+}
+
+export function useColumns(board_id) {
   const [data, setData] = useState<{
     columns: IColumn[];
     areColumnsLoading: boolean;
@@ -82,8 +126,4 @@ export function useColumns(board_id: string): {
     });
   }, 3000);
   return data;
-}
-
-export function useBoards() {
-  return useSWR<IBoard[]>(`/boards`);
 }
