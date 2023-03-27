@@ -106,7 +106,7 @@ export default function ManageTaskDialog({
   });
 
   const {
-    subTasks,
+    subtasks: subTasks,
     isLoading: areSubtasksLoading,
     error: subtaskError,
   } = useSubtasks(editableTask ? editableTask.task_id : '');

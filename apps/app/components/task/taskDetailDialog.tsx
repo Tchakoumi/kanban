@@ -51,7 +51,7 @@ export default function TaskDetailDialog({
   const theme = generateTheme(activeMode);
 
   const {
-    subTasks,
+    subtasks: subTasks,
     isLoading: areSubtasksLoading,
     error: isError,
   } = useSubtasks(task_id);
