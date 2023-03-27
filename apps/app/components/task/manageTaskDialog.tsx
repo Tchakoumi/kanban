@@ -130,7 +130,10 @@ export default function ManageTaskDialog({
 
   const [subtasks, setSubtasks] = useState<ISubtask[]>([]);
 
-  if (subtasks.length + deletedSubtaskIds.length < subTasks.length)
+  if (
+    subtasks.length + deletedSubtaskIds.length < subTasks.length &&
+    editableTask
+  )
     setSubtasks(subTasks);
 
   function handleClose() {
