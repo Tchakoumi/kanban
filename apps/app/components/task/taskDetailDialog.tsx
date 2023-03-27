@@ -22,7 +22,13 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { useColumns, useSubtasks } from '../../services';
+import {
+  updateSubtask,
+  updateTask,
+  useBoardDetails,
+  useColumns,
+  useSubtasks,
+} from '../../services';
 import Subtask from './subtask';
 import TaskMore from './taskMore';
 
@@ -47,6 +53,7 @@ export default function TaskDetailDialog({
   const {
     query: { board_id },
   } = useRouter();
+  const { mutate } = useBoardDetails(board_id as string);
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
 
@@ -55,9 +62,11 @@ export default function TaskDetailDialog({
     isLoading: areSubtasksLoading,
     error: isError,
   } = useSubtasks(task_id);
-  const { columns, areColumnsLoading, columnsError } = useColumns(
-    String(board_id)
-  );
+  const {
+    data: columns,
+    error: columnsError,
+    isLoading: areColumnsLoading,
+  } = useColumns(String(board_id));
 
   if (columnsError) {
     const notif = new useNotification();
@@ -71,15 +80,29 @@ export default function TaskDetailDialog({
   }
 
   function changeTaskColumn(new_column_id: string) {
-    //TODO: CALL API HERE TO CHANGE TASKS COLUMN ID SENDING IT TO THE LAST POSITION. USE DATA task_id and new_column_id
-    //TODO: MUTATE useBoardDetails
-    alert(`moved task "${task_id}" to column "${new_column_id}"`);
+    updateTask(task_id, {
+      newSubtasks: [],
+      task_id: task_id,
+      updatedSubtasks: [],
+      deletedSubtaskIds: [],
+      column_id: new_column_id,
+    });
+    mutate();
   }
 
   function handleCheckSubtask(subtask_id: string, new_status: boolean) {
-    //TODO: CALL API HERE TO CHANGE SUBTASKS DONE STATUS
-    //TODO: MUTATE useBoardDetails
-    alert(`changed task's done status`);
+    updateSubtask(subtask_id, { is_done: new_status })
+      .then(() => mutate())
+      .catch((error) => {
+        const notif = new useNotification();
+        notif.notify({ render: 'Notifying' });
+        notif.update({
+          type: 'ERROR',
+          render: isError ?? 'Something went wrong while loading ',
+          autoClose: 3000,
+          icon: () => <ReportRounded fontSize="medium" color="error" />,
+        });
+      });
   }
 
   if (isError) {
