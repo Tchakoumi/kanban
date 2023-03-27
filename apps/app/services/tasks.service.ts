@@ -32,3 +32,10 @@ export async function createNewTask(newTask: ICreateTask) {
 export async function updateTask(task_id: string, updateData: IEditTask) {
   await http.put(`/tasks/${task_id}/edit`, updateData);
 }
+
+export async function updateSubtask(
+  subtask_id: string,
+  updateData: Partial<ISubtask>
+) {
+  await http.put('/tasks/subtasks/edit', { ...updateData, subtask_id });
+}
