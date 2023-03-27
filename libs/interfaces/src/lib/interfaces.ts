@@ -15,12 +15,10 @@ export interface ICreateTask {
 }
 
 export interface IEditTask extends Partial<ICreateTask> {
+  task_id: string;
   task_position?: number;
   deletedSubtaskIds: string[];
   updatedSubtasks: Partial<ISubtask>[];
-  //TODO: Verify if these should be added
-  newTasks: ICreateSubtask[];
-  task_id: string;
 }
 
 export interface ITask extends Omit<ICreateTask, 'newSubtasks'> {
@@ -54,11 +52,9 @@ export interface ICreateBoard {
 }
 
 export interface IEditBoard extends Partial<ICreateBoard> {
+  board_id: string;
   deletedColumnIds: string[];
   updatedColumns: Partial<IColumn>[];
-  //TODO: Verify if these should be added
-  newColumns: ICreateColumn[];
-  board_id: string;
 }
 
 export interface IBoard extends Omit<ICreateBoard, 'newColumns'> {
