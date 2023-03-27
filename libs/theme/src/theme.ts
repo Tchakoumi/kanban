@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, lighten } from '@mui/material/styles';
 import React from 'react';
 import { ModeType } from './modeContext/mode.interface';
 
@@ -168,6 +168,19 @@ export function generateTheme(mode?: ModeType) {
       },
     },
     components: {
+      MuiTextField: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            '& .MuiInputBase-root': {
+              fontWeight: 500,
+            },
+            '& ::placeholder': {
+              ...theme.typography.caption,
+              color: lighten(theme.common.black as string, 0.25),
+            },
+          }),
+        },
+      },
       MuiMenu: {
         styleOverrides: {
           root: ({ theme }) => ({
