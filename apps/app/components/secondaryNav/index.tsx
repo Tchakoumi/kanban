@@ -6,16 +6,13 @@ import logo_dark from '../../public/logo_dark.png';
 import logo_light from '../../public/logo_light.png';
 import Boards from '../board/boards';
 import ThemeSwitcher from './themeSwitcher';
-import { IBoard } from '@kanban/interfaces';
 
 export default function SecondaryNav({
   isSecondaryNavOpen,
   closeSecondaryNav,
-  boards,
 }: {
   isSecondaryNavOpen: boolean;
   closeSecondaryNav: () => void;
-  boards: IBoard[];
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
@@ -80,7 +77,7 @@ export default function SecondaryNav({
             rowGap: 2,
           }}
         >
-          <Boards boards={boards} />
+          <Boards />
           <ThemeSwitcher />
         </Box>
         <Button

@@ -28,7 +28,9 @@ export function getAxiosInstance(): AxiosInstance {
     (error) => {
       console.log(error);
       return Promise.reject(
-        error.response?.data || 'Sorry, this error is not supposed to happen'
+        error.response?.data ||
+          error.message ||
+          'Sorry, this error is not supposed to happen'
       );
     }
   );

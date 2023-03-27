@@ -1,17 +1,42 @@
-import { IColumnDetails } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
-import { AddOutlined } from '@mui/icons-material';
+import { useNotification } from '@kanban/toast';
+import { AddOutlined, ReportRounded } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
 import { Scrollbars } from 'rc-scrollbars';
+import { useEffect } from 'react';
+import { useBoardDetails } from '../../services';
 import Column from './column';
 
-export default function Columns({ columns }: { columns: IColumnDetails[] }) {
+export default function Columns() {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
+  const {
+    query: { board_id },
+  } = useRouter();
+
+  const { areColumnsLoading, boardDetails, columnsError } = useBoardDetails(
+    String(board_id)
+  );
+
+  useEffect(() => {
+    if (columnsError) {
+      const notif = new useNotification();
+      notif.notify({ render: 'Notifying' });
+      notif.update({
+        type: 'ERROR',
+        render: columnsError ?? 'Something went wrong while loading boards ',
+        autoClose: 3000,
+        icon: () => <ReportRounded fontSize="medium" color="error" />,
+      });
+    }
+  }, [columnsError]);
 
   return (
     <Box sx={{ height: '100%' }}>
-      {columns.length === 0 ? (
+      {areColumnsLoading || !boardDetails ? (
+        'Skeleton'
+      ) : (boardDetails ? boardDetails.columns : []).length === 0 ? (
         <Box
           sx={{
             height: '100%',
@@ -49,7 +74,7 @@ export default function Columns({ columns }: { columns: IColumnDetails[] }) {
               height: '100%',
             }}
           >
-            {columns
+            {boardDetails.columns
               .sort((a, b) => (a.column_position > b.column_position ? 1 : -1))
               .map((column, index) => (
                 <Column column={column} key={index} />

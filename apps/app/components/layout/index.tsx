@@ -1,4 +1,3 @@
-import { IBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { Visibility } from '@mui/icons-material';
 import { Box, Button, Tooltip } from '@mui/material';
@@ -8,10 +7,8 @@ import SecondaryNav from '../secondaryNav';
 
 export default function Layout({
   children,
-  boards,
 }: {
   children: JSX.Element | JSX.Element[];
-  boards: IBoard[];
 }) {
   const { activeMode } = useMode();
   const [isSecondaryNavOpen, setIsSecondaryNavOpen] = useState<boolean>(true);
@@ -27,7 +24,6 @@ export default function Layout({
         }}
       >
         <SecondaryNav
-          boards={boards}
           isSecondaryNavOpen={isSecondaryNavOpen}
           closeSecondaryNav={() => setIsSecondaryNavOpen(false)}
         />
@@ -38,7 +34,7 @@ export default function Layout({
             height: '100%',
           }}
         >
-          <PrimaryNav boards={boards} isSecondaryNavOpen={isSecondaryNavOpen} />
+          <PrimaryNav isSecondaryNavOpen={isSecondaryNavOpen} />
           <Box sx={{ position: 'relative', padding: 3 }}>
             <Tooltip arrow title="Show Sidebar">
               <Box

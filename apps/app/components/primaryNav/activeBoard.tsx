@@ -1,17 +1,16 @@
-import { IBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import {
   KeyboardArrowDownOutlined,
-  KeyboardArrowUpOutlined,
+  KeyboardArrowUpOutlined
 } from '@mui/icons-material';
 import { Box, Menu, Skeleton, Typography } from '@mui/material';
-import { useActiveBoard } from '../../services';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useActiveBoard } from '../../services';
 import Boards from '../board/boards';
 import ThemeSwitcher from '../secondaryNav/themeSwitcher';
 
-export default function ActiveBoard({ boards }: { boards: IBoard[] }) {
+export default function ActiveBoard() {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
   const {
@@ -95,7 +94,7 @@ export default function ActiveBoard({ boards }: { boards: IBoard[] }) {
         }}
       >
         <Box>
-          <Boards boards={boards} />
+          <Boards />
           <ThemeSwitcher />
         </Box>
       </Menu>

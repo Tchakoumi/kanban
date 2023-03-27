@@ -27,6 +27,9 @@ function CustomApp(props: CustomAppProps) {
         <SWRConfig
           value={{
             refreshInterval: 3000,
+            errorRetryInterval: 100,
+            errorRetryCount: 3,
+            shouldRetryOnError: false,
             fetcher,
           }}
         >

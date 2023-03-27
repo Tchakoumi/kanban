@@ -10,11 +10,13 @@ export default function BoardItem({
   handleClick,
   colored = false,
   isActive = false,
+  disabled = false,
 }: {
   title: string;
   handleClick: () => void;
   colored?: boolean;
   isActive?: boolean;
+  disabled?: boolean;
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
@@ -22,6 +24,7 @@ export default function BoardItem({
     <Box
       onClick={handleClick}
       component={Button}
+      disabled={disabled}
       sx={{
         '&:hover': {
           backgroundColor: isActive
