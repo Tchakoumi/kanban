@@ -1,7 +1,7 @@
 //TODO: FILE TO WORK IN
 
 import { http } from '@kanban/axios';
-import { IBoard } from '@kanban/interfaces';
+import { IBoard, ICreateTask, IEditTask } from '@kanban/interfaces';
 
 import useSWR from 'swr';
 
@@ -16,6 +16,15 @@ export function useActiveBoard(board_id: string): {
 } {
   const { data, error, isLoading } = useSWR<IBoard>(`/boards/${board_id}`);
   return { activeBoard: data, isLoading, isError: Boolean(error) };
+}
+
+export async function createNewTask(newTask: ICreateTask) {
+  const { data } = await http.post('/tasks/new', newTask);
+  return data;
+}
+
+export async function updateTask(task_id: string, updateData: IEditTask) {
+  await http.put(`/tasks/${task_id}/edit`, updateData);
 }
 
 export async function deleteBoard(board_id: string) {
