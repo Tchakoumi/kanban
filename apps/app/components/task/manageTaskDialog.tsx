@@ -1,5 +1,5 @@
 import { DialogTransition } from '@kanban/dialog';
-import { ICreateTask, ISubtask } from '@kanban/interfaces';
+import { ICreateTask, IEditTask, ISubtask, ITask } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { useNotification } from '@kanban/toast';
 import {
@@ -23,18 +23,20 @@ import {
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import * as Yup from 'yup';
-import { useColumns } from '../../services';
 import { v4 as uuidv4 } from 'uuid';
+import * as Yup from 'yup';
+import { useColumns, useSubtasks } from '../../services';
 
 export default function ManageTaskDialog({
   isDialogOpen,
   closeDialog,
   submitDialog,
+  editableTask,
 }: {
   isDialogOpen: boolean;
   closeDialog: () => void;
-  submitDialog: (val: ICreateTask) => void;
+  submitDialog: (val: ICreateTask | IEditTask) => void;
+  editableTask?: ITask;
 }) {
   const {
     query: { board_id },
@@ -57,7 +59,7 @@ export default function ManageTaskDialog({
     });
   }
 
-  const initialValues: Omit<ICreateTask, 'newSubtasks'> = {
+  const initialValues: Omit<ICreateTask, 'newSubtasks'> = editableTask ?? {
     column_id: '',
     task_description: '',
     task_title: '',
@@ -76,28 +78,82 @@ export default function ManageTaskDialog({
     validationSchema,
     enableReinitialize: true,
     onSubmit: (values, { resetForm }) => {
-      submitDialog({
+      const newTask: ICreateTask = {
         ...values,
         newSubtasks: subtasks.map(({ subtask_title }) => {
           return { subtask_title };
         }),
-      });
+      };
+
+      const editedTask: IEditTask = {
+        ...values,
+        task_id: editableTask.task_id,
+        deletedSubtaskIds,
+        updatedSubtasks,
+        newTasks: subtasks
+          .filter(
+            ({ subtask_id: s_id }) =>
+              !subTasks.find(({ subtask_id: st_id }) => st_id === s_id)
+          )
+          .map(({ subtask_title }) => {
+            return { subtask_title };
+          }),
+      };
+      submitDialog(editableTask ? editedTask : newTask);
       resetForm();
       handleClose();
     },
   });
 
+  const {
+    subTasks,
+    isLoading: areSubtasksLoading,
+    error: subtaskError,
+  } = useSubtasks(editableTask ? editableTask.task_id : '');
+
+  if (subtaskError) {
+    //TODO: THE BELOW ERROR COMES FROM BACKEND WHEN THE STRING IS EMPTY.
+    if (subtaskError !== 'errorForEmptyStringTaskId') {
+      const notif = new useNotification();
+      notif.notify({ render: 'Notifying' });
+      notif.update({
+        type: 'ERROR',
+        render: subtaskError ?? 'Something went wrong while loading subtasks ',
+        autoClose: 3000,
+        icon: () => <ReportRounded fontSize="medium" color="error" />,
+      });
+    }
+  }
+
+  const [deletedSubtaskIds, setDeletedSubtaskIds] = useState<string[]>([]);
+  const [updatedSubtasks, setUpdatedSubtasks] = useState<ISubtask[]>([]);
+
   const [subtasks, setSubtasks] = useState<ISubtask[]>([]);
+
+  if (subtasks.length + deletedSubtaskIds.length < subTasks.length)
+    setSubtasks(subTasks);
 
   function handleClose() {
     closeDialog();
     formik.resetForm();
     setSubtasks([]);
+    setDeletedSubtaskIds([]);
+    setUpdatedSubtasks([]);
   }
 
   const [showSubtaskError, setShowSubtaskError] = useState<boolean>(false);
 
   function removeSubTask(subtask_id: string) {
+    if (editableTask) {
+      if (subTasks.find(({ subtask_id: s_id }) => s_id === subtask_id)) {
+        setDeletedSubtaskIds([...deletedSubtaskIds, subtask_id]);
+        //remove the deleted task from list of updated tasks (in case it was updated before deleted)
+        setUpdatedSubtasks(
+          updatedSubtasks.filter(({ subtask_id: s_id }) => s_id !== subtask_id)
+        );
+      }
+    }
+
     setSubtasks(
       subtasks.filter(({ subtask_id: s_id, subtask_title: st }) => {
         if (st === '') setShowSubtaskError(false);
@@ -107,11 +163,29 @@ export default function ManageTaskDialog({
   }
 
   function changeSubTask(subtask_id, value) {
+    const editedSubtask = subTasks.find(
+      ({ subtask_id: s_id }) => s_id === subtask_id
+    );
+    if (editedSubtask) {
+      const newUpdated = updatedSubtasks.filter(
+        ({ subtask_id: s_id }) => s_id !== subtask_id
+      );
+      setUpdatedSubtasks(
+        editedSubtask.subtask_title === value
+          ? newUpdated
+          : [...newUpdated, { ...editedSubtask, subtask_title: value }]
+      );
+    }
+
     const newSubtasks = subtasks.map((subtask) => {
       const { subtask_id: s_id } = subtask;
       if (s_id !== subtask_id) return subtask;
 
-      if (subtask.subtask_title === '') setShowSubtaskError(false);
+      //ONLY REMOVE ERROR WHEN THERE'S NO OTHER LEFT
+      if (!subtasks.find(({ subtask_title: st }) => st === ''))
+        setShowSubtaskError(false);
+
+      if (value === '') setShowSubtaskError(true);
       return { ...subtask, subtask_title: value };
     });
 
@@ -147,7 +221,9 @@ export default function ManageTaskDialog({
           rowGap: 3,
         }}
       >
-        <Typography variant="h2">Add New Task</Typography>
+        <Typography variant="h2">{`${
+          editableTask ? 'Edit' : 'Add New'
+        } Task`}</Typography>
         <Box
           sx={{ display: 'grid', rowGap: 3 }}
           component="form"
@@ -238,6 +314,7 @@ export default function ManageTaskDialog({
               color="secondary"
               variant="contained"
               disableElevation
+              disabled={areSubtasksLoading && editableTask !== undefined}
               onClick={addSubtask}
             >
               + Add New Subtask
@@ -291,9 +368,19 @@ export default function ManageTaskDialog({
             type="submit"
             color="primary"
             variant="contained"
+            disabled={
+              editableTask &&
+              deletedSubtaskIds.length === 0 &&
+              updatedSubtasks.length === 0 &&
+              editableTask.task_title === formik.values.task_title &&
+              formik.values.task_description ===
+                editableTask.task_description &&
+              formik.values.column_id === editableTask.column_id &&
+              subtasks.length + deletedSubtaskIds.length === subTasks.length
+            }
             disableElevation
           >
-            Create Task
+            {editableTask ? 'Save Changes' : 'Create Task'}
           </Button>
         </Box>
       </Box>
