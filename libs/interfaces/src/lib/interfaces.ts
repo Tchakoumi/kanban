@@ -18,6 +18,9 @@ export interface IEditTask extends Partial<ICreateTask> {
   task_position?: number;
   deletedSubtaskIds: string[];
   updatedSubtasks: Partial<ISubtask>[];
+  //TODO: Verify if these should be added
+  newTasks: ICreateSubtask[];
+  task_id: string;
 }
 
 export interface ITask extends Omit<ICreateTask, 'newSubtasks'> {
