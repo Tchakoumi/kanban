@@ -1,15 +1,15 @@
-import { IBoard, ICreateBoard } from '@kanban/interfaces';
+import { ICreateBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
-import { Box, Typography } from '@mui/material';
-import BoardItem from './boardItem';
-import { useRouter } from 'next/router';
-import { useActiveBoard } from '../../services';
-import { useState } from 'react';
-import ManageBoardDialog from './manageBoardDialog';
 import { ErrorMessage, useNotification } from '@kanban/toast';
 import { ReportRounded } from '@mui/icons-material';
+import { Box, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useActiveBoard, useBoards } from '../../services';
+import BoardItem from './boardItem';
+import ManageBoardDialog from './manageBoardDialog';
 
-export default function Boards({ boards }: { boards: IBoard[] }) {
+export default function Boards() {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
   const {
@@ -31,6 +31,21 @@ export default function Boards({ boards }: { boards: IBoard[] }) {
       icon: () => <ReportRounded fontSize="medium" color="error" />,
     });
   }
+
+  const { data: boards, isLoading: areBoardsLoading, error } = useBoards();
+
+  useEffect(() => {
+    if (error) {
+      const notif = new useNotification();
+      notif.notify({ render: 'Notifying' });
+      notif.update({
+        type: 'ERROR',
+        render: error ?? 'Something went wrong while loading boards ',
+        autoClose: 3000,
+        icon: () => <ReportRounded fontSize="medium" color="error" />,
+      });
+    }
+  }, [error]);
 
   const [isCreateBoardDialogOpen, setIsCreateBoardDialogOpen] =
     useState<boolean>(false);
@@ -95,15 +110,19 @@ export default function Boards({ boards }: { boards: IBoard[] }) {
             textTransform: 'uppercase',
             color: theme.common.medium_grey,
           }}
-        >{`all boards (${boards.length})`}</Typography>
-        {boards.map(({ board_id, board_name }, index) => (
-          <BoardItem
-            key={index}
-            handleClick={() => push(`/${board_id}`)}
-            title={board_name}
-            isActive={activeBoard?.board_id === board_id}
-          />
-        ))}
+        >{`all boards (${boards ? boards.length : 0})`}</Typography>
+        {/* TODO: SKELETON SCREEN */}
+
+        {!boards || areBoardsLoading
+          ? 'Skeleton screen'
+          : boards.map(({ board_id, board_name }, index) => (
+              <BoardItem
+                key={index}
+                handleClick={() => push(`/${board_id}`)}
+                title={board_name}
+                isActive={activeBoard?.board_id === board_id}
+              />
+            ))}
         <BoardItem
           handleClick={() => setIsCreateBoardDialogOpen(true)}
           title={'+Create New Board'}

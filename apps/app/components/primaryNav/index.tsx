@@ -1,4 +1,4 @@
-import { IBoard, ICreateTask } from '@kanban/interfaces';
+import { ICreateTask } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { ErrorMessage, useNotification } from '@kanban/toast';
 import { AddOutlined, ReportRounded } from '@mui/icons-material';
@@ -16,10 +16,8 @@ import BoardMore from './boardMore';
 
 export default function PrimaryNav({
   isSecondaryNavOpen,
-  boards,
 }: {
   isSecondaryNavOpen: boolean;
-  boards: IBoard[];
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme();
@@ -171,7 +169,7 @@ export default function PrimaryNav({
             }}
             orientation="vertical"
           />
-          <ActiveBoard boards={boards} />
+          <ActiveBoard />
           <Box
             sx={{
               justifySelf: 'end',
@@ -194,7 +192,9 @@ export default function PrimaryNav({
               <Button
                 color="primary"
                 variant="contained"
-                disabled={areColumnsLoading || columns.length === 0}
+                disabled={
+                  !activeBoard || areColumnsLoading || columns.length === 0
+                }
                 startIcon={<AddOutlined />}
                 onClick={() => setIsAddDialogOpen(true)}
                 sx={{
