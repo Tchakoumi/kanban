@@ -3,6 +3,7 @@ import { IColumnDetails, IEditTask, ITask } from '@kanban/interfaces';
 import { ErrorMessage, useNotification } from '@kanban/toast';
 import { ReportRounded } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
+import { deleteTask, updateTask, useActiveBoard } from 'apps/app/services';
 import { CSSProperties, useState } from 'react';
 import Task from '../task';
 import ManageTaskDialog from '../task/manageTaskDialog';
@@ -69,7 +70,9 @@ export default function Column({
   const [actionnedTask, setActionnedTask] = useState<string>();
   const [submissionNotif, setSubmissionNotif] = useState<useNotification>();
 
-  function deleteTask(task_id: string) {
+  const { mutate } = useActiveBoard(String(actionnedTask));
+
+  function deleteTaskHandler(task_id: string) {
     setActionnedTask(task_id);
     const notif = new useNotification();
     if (submissionNotif) {
@@ -79,24 +82,24 @@ export default function Column({
     notif.notify({
       render: 'Deleting task...',
     });
-    setTimeout(() => {
-      //TODO: CALL API HERE TO delete task
-      // eslint-disable-next-line no-constant-condition
-      if (5 > 4) {
+    deleteTask(task_id)
+      .then(() => {
+        mutate();
         notif.update({
           render: 'Task Deleted',
-          autoClose: 2000
+          autoClose: 2000,
         });
         setSubmissionNotif(undefined);
-      } else {
+      })
+      .catch((error) => {
         notif.update({
           type: 'ERROR',
           render: (
             <ErrorMessage
-              retryFunction={() => deleteTask(task_id)}
+              retryFunction={() => deleteTaskHandler(task_id)}
               notification={notif}
-              //TODO: message should come from backend
               message={
+                error?.message ||
                 'Something went wrong while deleting task. Please try again!!!'
               }
             />
@@ -104,11 +107,8 @@ export default function Column({
           autoClose: 5000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
-      }
-      setActionnedTask(undefined);
-    }, 3000);
-
-    //TODO: MUTATE useBoardDetails
+      })
+      .finally(() => setActionnedTask(undefined));
   }
 
   function editTask(val: IEditTask) {
@@ -121,24 +121,24 @@ export default function Column({
     notif.notify({
       render: 'Saving task modifications...',
     });
-    setTimeout(() => {
-      //TODO: CALL API HERE TO edit task with data val
-      // eslint-disable-next-line no-constant-condition
-      if (5 > 4) {
+    updateTask(val.task_id, val)
+      .then(() => {
+        mutate();
         notif.update({
           render: 'Task saved!',
-          autoClose: 2000
+          autoClose: 2000,
         });
         setSubmissionNotif(undefined);
-      } else {
+      })
+      .catch((error) => {
         notif.update({
           type: 'ERROR',
           render: (
             <ErrorMessage
               retryFunction={() => editTask(val)}
               notification={notif}
-              //TODO: message should come from backend
               message={
+                error?.message ||
                 'Something went wrong while saving task. Please try again!!!'
               }
             />
@@ -146,11 +146,8 @@ export default function Column({
           autoClose: 5000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
-      }
-      setActionnedTask(undefined);
-    }, 3000);
-
-    //TODO: MUTATE useBoardDetails
+      })
+      .finally(() => setActionnedTask(undefined));
   }
 
   return (
@@ -187,7 +184,7 @@ export default function Column({
             danger
             dialogTitle="Delete this task?"
             confirm={() => {
-              deleteTask(openTask.task_id);
+              deleteTaskHandler(openTask.task_id);
             }}
           />
         </>

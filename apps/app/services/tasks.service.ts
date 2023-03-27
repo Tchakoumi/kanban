@@ -33,6 +33,10 @@ export async function updateTask(task_id: string, updateData: IEditTask) {
   await http.put(`/tasks/${task_id}/edit`, updateData);
 }
 
+export async function deleteTask(task_id: string) {
+  await http.put(`/tasks/${task_id}/delete`);
+}
+
 export async function updateSubtask(
   subtask_id: string,
   updateData: Partial<ISubtask>
