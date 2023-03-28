@@ -5,7 +5,7 @@ import { ReportRounded } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useActiveBoard, useBoards } from '../../services';
+import { useBoardDetails, useBoards } from '../../services';
 import BoardItem from './boardItem';
 import ManageBoardDialog from './manageBoardDialog';
 
@@ -17,20 +17,25 @@ export default function Boards() {
     query: { board_id },
   } = useRouter();
 
-  const { activeBoard, isLoading, isError } = useActiveBoard(String(board_id));
+  const {
+    areColumnsLoading,
+    boardDetails: { board_id: b_id },
+    columnsError,
+  } = useBoardDetails(String(board_id));
 
-  if (isError) {
-    const notif = new useNotification();
-    notif.notify({ render: 'Notifying' });
-    notif.update({
-      type: 'ERROR',
-      render: isError
-        ? 'errorMessage'
-        : 'Something went wrong while loading boards ',
-      autoClose: 3000,
-      icon: () => <ReportRounded fontSize="medium" color="error" />,
-    });
-  }
+  useEffect(() => {
+    if (columnsError) {
+      const notif = new useNotification();
+      notif.notify({ render: 'Notifying' });
+      notif.update({
+        type: 'ERROR',
+        render:
+          columnsError ?? 'Something went wrong while loading board details ',
+        autoClose: 3000,
+        icon: () => <ReportRounded fontSize="medium" color="error" />,
+      });
+    }
+  }, [columnsError]);
 
   const { data: boards, isLoading: areBoardsLoading, error } = useBoards();
 
@@ -120,14 +125,14 @@ export default function Boards() {
                 key={index}
                 handleClick={() => push(`/${board_id}`)}
                 title={board_name}
-                isActive={activeBoard?.board_id === board_id}
+                isActive={b_id === board_id}
               />
             ))}
         <BoardItem
           handleClick={() => setIsCreateBoardDialogOpen(true)}
           title={'+Create New Board'}
           colored
-          disabled={isLoading}
+          disabled={areColumnsLoading}
         />
       </Box>
     </>
