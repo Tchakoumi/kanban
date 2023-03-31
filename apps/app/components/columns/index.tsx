@@ -27,7 +27,7 @@ export default function Columns() {
       notif.notify({ render: 'Notifying' });
       notif.update({
         type: 'ERROR',
-        render: columnsError ?? 'Something went wrong while loading boards ',
+        render: columnsError?.message ?? 'Something went wrong while loading boards ',
         autoClose: 3000,
         icon: () => <ReportRounded fontSize="medium" color="error" />,
       });
