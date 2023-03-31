@@ -19,7 +19,7 @@ export default function Boards() {
 
   const {
     isLoading: areColumnsLoading,
-    data: { board_id: b_id },
+    data,
     error: columnsError,
   } = useBoardDetails(String(board_id));
 
@@ -30,7 +30,7 @@ export default function Boards() {
       notif.update({
         type: 'ERROR',
         render:
-          columnsError ?? 'Something went wrong while loading board details ',
+          columnsError?.message ?? 'Something went wrong while loading board details ',
         autoClose: 3000,
         icon: () => <ReportRounded fontSize="medium" color="error" />,
       });
@@ -50,7 +50,7 @@ export default function Boards() {
       notif.notify({ render: 'Notifying' });
       notif.update({
         type: 'ERROR',
-        render: error ?? 'Something went wrong while loading boards ',
+        render: error?.message ?? 'Something went wrong while loading boards ',
         autoClose: 3000,
         icon: () => <ReportRounded fontSize="medium" color="error" />,
       });
@@ -127,7 +127,7 @@ export default function Boards() {
                 key={index}
                 handleClick={() => push(`/${board_id}`)}
                 title={board_name}
-                isActive={b_id === board_id}
+                isActive={data ? data.board_id === board_id : false}
               />
             ))}
         <BoardItem
