@@ -30,16 +30,17 @@ export class TasksService {
   }
 
   async findOne(task_id: string): Promise<ITaskDetails> {
-    const { Subtasks, ...task } =
-      await this.prismaService.task.findUniqueOrThrow({
-        include: {
-          Subtasks: {
-            select: { subtask_id: true, subtask_title: true, is_done: true },
-            where: { is_deleted: false },
-          },
+    const uniqueTask = await this.prismaService.task.findUnique({
+      include: {
+        Subtasks: {
+          select: { subtask_id: true, subtask_title: true, is_done: true },
+          where: { is_deleted: false },
         },
-        where: { task_id },
-      });
+      },
+      where: { task_id },
+    });
+    if (!uniqueTask) return null;
+    const { Subtasks, ...task } = uniqueTask;
     const [total_done_subtasks, total_undone_subtasks] = Subtasks.reduce(
       ([totalDone, totalUndone], { is_done }) =>
         is_done ? [totalDone++, totalUndone] : [totalDone, totalUndone++],

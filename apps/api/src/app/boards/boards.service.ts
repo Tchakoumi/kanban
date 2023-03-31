@@ -24,15 +24,16 @@ export class BoardsService {
   }
 
   async findOneWithChildren(board_id: string): Promise<IBoardDetails> {
-    const { Columns, ...board } =
-      await this.prismaService.board.findUniqueOrThrow({
-        select: {
-          board_id: true,
-          board_name: true,
-          Columns: { include: { Tasks: { include: { Subtasks: true } } } },
-        },
-        where: { board_id },
-      });
+    const uniqueBoard = await this.prismaService.board.findUnique({
+      select: {
+        board_id: true,
+        board_name: true,
+        Columns: { include: { Tasks: { include: { Subtasks: true } } } },
+      },
+      where: { board_id },
+    });
+    if (!uniqueBoard) return null;
+    const { Columns, ...board } = uniqueBoard;
     return {
       ...board,
       columns: Columns.map(({ Tasks, ...column }) => ({
