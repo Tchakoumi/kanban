@@ -2,21 +2,24 @@ import { ConfirmDialog } from '@kanban/dialog';
 import { IColumnDetails, IEditTask, ITask } from '@kanban/interfaces';
 import { ErrorMessage, useNotification } from '@kanban/toast';
 import { ReportRounded } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 import { deleteTask, updateTask, useActiveBoard } from '../../services';
 import { CSSProperties, useState } from 'react';
 import Task from '../task';
 import ManageTaskDialog from '../task/manageTaskDialog';
 import TaskDetailDialog from '../task/taskDetailDialog';
+import randomColor from '../../common';
 
 function ColumnTitle({
   color_code,
   title,
   totalTasks,
+  skeleton = false,
 }: {
   color_code: CSSProperties['color'];
   title: string;
   totalTasks: number;
+  skeleton?: boolean;
 }) {
   return (
     <Box
@@ -30,7 +33,7 @@ function ColumnTitle({
     >
       <Box
         sx={{
-          backgroundColor: color_code,
+          backgroundColor: skeleton ? randomColor() : color_code,
           height: '15px',
           width: '15px',
           borderRadius: '100%',
@@ -46,7 +49,11 @@ function ColumnTitle({
           textTransform: 'uppercase',
         }}
       >
-        {`${title} (${totalTasks})`}
+        {skeleton ? (
+          <Skeleton sx={{ maxWidth: '120px' }} />
+        ) : (
+          `${title} (${totalTasks})`
+        )}
       </Typography>
     </Box>
   );
