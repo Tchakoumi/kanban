@@ -27,7 +27,7 @@ export default function ColumnSkeleton() {
             rowGap: 2.5,
           }}
         >
-          {[...new Array(50)].map((_, index) => (
+          {[...new Array(5)].map((_, index) => (
             <Box
               key={index}
               component={Paper}
