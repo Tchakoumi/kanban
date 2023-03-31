@@ -10,8 +10,9 @@ import {
 import useSWR from 'swr';
 
 export function useSubtasks(task_id: string) {
+  console.log(JSON.stringify(task_id));
   return useSWR<ITaskDetails>(
-    `/tasks/${task_id}/details`
+    `/tasks/${task_id?.length === 0 ?? task_id}/details`
   );
 }
 

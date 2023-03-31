@@ -19,7 +19,7 @@ export function useActiveBoard(board_id: string) {
 }
 
 export function useBoardDetails(board_id: string) {
-  return useSWR<IBoardDetails>(`/boards/${board_id}/details`);
+  return useSWR<IBoardDetails>(`/boards/${board_id ?? ''}/details`);
 }
 
 export async function createNewBoard(newBoard: ICreateBoard) {
