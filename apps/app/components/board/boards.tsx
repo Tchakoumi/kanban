@@ -2,7 +2,7 @@ import { ICreateBoard } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { ErrorMessage, useNotification } from '@kanban/toast';
 import { ReportRounded } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { createNewBoard, useBoardDetails, useBoards } from '../../services';
@@ -30,7 +30,8 @@ export default function Boards() {
       notif.update({
         type: 'ERROR',
         render:
-          columnsError?.message ?? 'Something went wrong while loading board details ',
+          columnsError?.message ??
+          'Something went wrong while loading board details ',
         autoClose: 3000,
         icon: () => <ReportRounded fontSize="medium" color="error" />,
       });
@@ -118,10 +119,17 @@ export default function Boards() {
             color: theme.common.medium_grey,
           }}
         >{`all boards (${boards ? boards.length : 0})`}</Typography>
-        {/* TODO: SKELETON SCREEN */}
-
         {!boards || areBoardsLoading
-          ? 'Skeleton screen'
+          ? [...new Array(3)].map((_, index) => (
+              <Skeleton
+                height="68px"
+                key={index}
+                sx={{
+                  borderTopRightRadius: '30px',
+                  borderBottomRightRadius: '30px',
+                }}
+              />
+            ))
           : boards.map(({ board_id, board_name }, index) => (
               <BoardItem
                 key={index}
