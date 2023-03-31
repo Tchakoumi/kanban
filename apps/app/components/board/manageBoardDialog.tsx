@@ -169,7 +169,9 @@ export default function ManageBoardDialog({
       setBoardColumns([
         ...boardColumns,
         {
-          column_color_code: '',
+          column_color_code: `#${Math.floor(Math.random() * 16777215).toString(
+            16
+          )}`,
           column_id: uuidv4(),
           column_position: 0,
           column_title: '',

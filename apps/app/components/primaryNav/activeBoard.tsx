@@ -1,12 +1,14 @@
 import { generateTheme, useMode } from '@kanban/theme';
+import { useNotification } from '@kanban/toast';
 import {
   KeyboardArrowDownOutlined,
   KeyboardArrowUpOutlined,
+  ReportRounded,
 } from '@mui/icons-material';
 import { Box, Menu, Skeleton, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { useActiveBoard } from '../../services';
+import { useEffect, useState } from 'react';
+import { useBoardDetails } from '../../services';
 import Boards from '../board/boards';
 import ThemeSwitcher from '../secondaryNav/themeSwitcher';
 
@@ -20,7 +22,25 @@ export default function ActiveBoard() {
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const { data: activeBoard, isLoading } = useActiveBoard(board_id as string);
+  const {
+    isLoading: areColumnsLoading,
+    data: { board_name },
+    error: columnsError,
+  } = useBoardDetails(String(board_id));
+
+  useEffect(() => {
+    if (columnsError) {
+      const notif = new useNotification();
+      notif.notify({ render: 'Notifying' });
+      notif.update({
+        type: 'ERROR',
+        render:
+          columnsError ?? 'Something went wrong while loading board details ',
+        autoClose: 3000,
+        icon: () => <ReportRounded fontSize="medium" color="error" />,
+      });
+    }
+  }, [columnsError]);
 
   function closeMenu() {
     setIsMoreMenuOpen(false);
@@ -54,12 +74,10 @@ export default function ActiveBoard() {
             whiteSpace: 'nowrap',
           }}
         >
-          {isLoading ? (
+          {areColumnsLoading ? (
             <Skeleton sx={{ maxWidth: '200px' }} />
-          ) : activeBoard ? (
-            activeBoard.board_name
           ) : (
-            'Select a board'
+            board_name ?? 'Select a board'
           )}
         </Typography>
         <Box
