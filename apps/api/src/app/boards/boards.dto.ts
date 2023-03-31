@@ -21,9 +21,9 @@ export class CreateBoardDto implements ICreateBoard {
   board_name: string;
 
   @IsArray()
-  @Type(() => CreateColumnDto)
   @ValidateNested({ each: true })
-  @ApiProperty({ type: Array<CreateColumnWithBoard> })
+  @Type(() => CreateColumnWithBoard)
+  @ApiProperty({ type: CreateColumnWithBoard, isArray: true })
   newColumns: CreateColumnWithBoard[];
 }
 
@@ -35,7 +35,7 @@ export class UpdateColumnWithBoard extends UpdateColumnDto {
 
 export class UpdateBoardDto
   extends PartialType(CreateBoardDto)
-  implements IEditBoard
+  implements Omit<IEditBoard, 'board_id'>
 {
   @ApiProperty()
   @IsString({ each: true })
