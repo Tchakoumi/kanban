@@ -1,13 +1,13 @@
 import { ConfirmDialog } from '@kanban/dialog';
+import { IEditBoard } from '@kanban/interfaces';
 import { generateTheme } from '@kanban/theme';
+import { ErrorMessage, useNotification } from '@kanban/toast';
 import { MoreVertOutlined, ReportRounded } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
-import { useActiveBoard } from '../../services';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { updateBoard, useActiveBoard, useBoards } from '../../services';
 import ManageBoardDialog from '../board/manageBoardDialog';
-import { IEditBoard } from '@kanban/interfaces';
-import { ErrorMessage, useNotification } from '@kanban/toast';
 
 export default function BoardMore({ disabled }: { disabled: boolean }) {
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
@@ -17,7 +17,10 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
     query: { board_id },
   } = useRouter();
 
-  const { data: activeBoard } = useActiveBoard(board_id as string);
+  const { mutate: mutateBoards } = useBoards();
+  const { data: activeBoard, mutate: mutateActiveBoard } = useActiveBoard(
+    board_id as string
+  );
 
   function closeMenu() {
     setIsMoreMenuOpen(false);
@@ -51,23 +54,24 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
     notif.notify({
       render: 'Saving board modifications...',
     });
-    setTimeout(() => {
-      //TODO: CALL API HERE TO edit board with data val
-      // eslint-disable-next-line no-constant-condition
-      if (5 > 4) {
+    updateBoard(board_id as string, val)
+      .then(() => {
+        mutateBoards();
+        mutateActiveBoard();
         notif.update({
           render: 'Board saved!',
         });
         setSubmissionNotif(undefined);
-      } else {
+      })
+      .catch((error) => {
         notif.update({
           type: 'ERROR',
           render: (
             <ErrorMessage
               retryFunction={() => saveEditedBoard(val)}
               notification={notif}
-              //TODO: message should come from backend
               message={
+                error?.message ||
                 'Something went wrong while saving board. Please try again!!!'
               }
             />
@@ -75,12 +79,8 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
           autoClose: 2000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
-      }
-      setIsSubmitting(undefined);
-    }, 3000);
-
-    //TODO: MUTATE useBoardDetails
-    //TODO: MUTATE useBoard
+      })
+      .finally(() => setIsSubmitting(false));
   }
 
   return (
