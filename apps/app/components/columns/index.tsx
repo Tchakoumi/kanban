@@ -6,7 +6,12 @@ import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import Scrollbars from 'rc-scrollbars';
 import { useEffect, useState } from 'react';
-import { createNewBoard, useBoardDetails, useBoards } from '../../services';
+import {
+  createNewBoard,
+  createNewColumn,
+  useBoardDetails,
+  useBoards,
+} from '../../services';
 import ManageBoardDialog from '../board/manageBoardDialog';
 import Column from './column';
 import ColumnSkeleton from './columnSkeleton';
@@ -92,29 +97,29 @@ export default function Columns() {
     notif.notify({
       render: 'Creating column...',
     });
-    setTimeout(() => {
-      //TODO: CALL API HERE TO CREATE COLUM with data val
-      // eslint-disable-next-line no-constant-condition
-      if (5 > 4) {
+    createNewColumn(val)
+      .then(() => {
         notif.update({
           render: 'Created column successfully',
         });
         setSubmissionNotif(undefined);
         mutateActiveBoard();
-      } else {
+      })
+      .catch((error) => {
         notif.update({
           type: 'ERROR',
           render: (
             <ErrorMessage
               retryFunction={() => createColumnHandler(val)}
               notification={notif}
-              //TODO: message should come from backend
-              message="There was a problem creating column. Please try again!!!"
+              message={
+                error?.message ||
+                'There was a problem creating column. Please try again!!!'
+              }
             />
           ),
         });
-      }
-    }, 3000);
+      });
   }
 
   return (

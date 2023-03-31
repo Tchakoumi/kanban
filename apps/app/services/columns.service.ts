@@ -7,7 +7,7 @@ export function useColumns(board_id: string) {
   return useSWR<IColumn[]>(`/columns?board_id=${board_id}`);
 }
 
-export async function createNewColumns(newColumn: ICreateColumn) {
+export async function createNewColumn(newColumn: ICreateColumn) {
   const { data } = await http.post<IColumn>(`/columns/new`, newColumn);
   return data;
 }
