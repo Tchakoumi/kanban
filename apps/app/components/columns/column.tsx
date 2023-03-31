@@ -3,7 +3,7 @@ import { IColumnDetails, IEditTask, ITask } from '@kanban/interfaces';
 import { ErrorMessage, useNotification } from '@kanban/toast';
 import { ReportRounded } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
-import { deleteTask, updateTask, useActiveBoard } from 'apps/app/services';
+import { deleteTask, updateTask, useActiveBoard } from '../../services';
 import { CSSProperties, useState } from 'react';
 import Task from '../task';
 import ManageTaskDialog from '../task/manageTaskDialog';
