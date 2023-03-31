@@ -10,7 +10,7 @@ import ManageTaskDialog from '../task/manageTaskDialog';
 import TaskDetailDialog from '../task/taskDetailDialog';
 import randomColor from '../../common';
 
-function ColumnTitle({
+export function ColumnTitle({
   color_code,
   title,
   totalTasks,
