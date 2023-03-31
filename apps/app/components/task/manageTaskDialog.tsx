@@ -55,7 +55,7 @@ export default function ManageTaskDialog({
     notif.notify({ render: 'Notifying' });
     notif.update({
       type: 'ERROR',
-      render: columnsError ?? 'Something went wrong while loading columns',
+      render: columnsError?.message ?? 'Something went wrong while loading columns',
       autoClose: 3000,
       icon: () => <ReportRounded fontSize="medium" color="error" />,
     });
@@ -71,7 +71,7 @@ export default function ManageTaskDialog({
     task_title: Yup.string().required(),
     task_description: Yup.string().required(),
     column_id: Yup.string()
-      .oneOf(columns.map(({ column_id }) => column_id))
+      .oneOf((columns ?? []).map(({ column_id }) => column_id))
       .required(),
   });
 
@@ -95,7 +95,7 @@ export default function ManageTaskDialog({
         newSubtasks: subtasks
           .filter(
             ({ subtask_id: s_id }) =>
-              !subTasks.find(({ subtask_id: st_id }) => st_id === s_id)
+              !data?.subtasks.find(({ subtask_id: st_id }) => st_id === s_id)
           )
           .map(({ subtask_title }) => {
             return { subtask_title };
@@ -108,7 +108,7 @@ export default function ManageTaskDialog({
   });
 
   const {
-    subtasks: subTasks,
+    data,
     isLoading: areSubtasksLoading,
     error: subtaskError,
   } = useSubtasks(editableTask ? editableTask.task_id : '');
@@ -119,7 +119,7 @@ export default function ManageTaskDialog({
       notif.notify({ render: 'Notifying' });
       notif.update({
         type: 'ERROR',
-        render: subtaskError ?? 'Something went wrong while loading subtasks ',
+        render: subtaskError?.message ?? 'Something went wrong while loading subtasks ',
         autoClose: 3000,
         icon: () => <ReportRounded fontSize="medium" color="error" />,
       });
@@ -132,10 +132,10 @@ export default function ManageTaskDialog({
   const [subtasks, setSubtasks] = useState<ISubtask[]>([]);
 
   if (
-    subtasks.length + deletedSubtaskIds.length < subTasks.length &&
+    subtasks.length + deletedSubtaskIds.length < data?.subtasks.length &&
     editableTask
   )
-    setSubtasks(subTasks);
+    setSubtasks(data.subtasks);
 
   function handleClose() {
     closeDialog();
@@ -149,7 +149,7 @@ export default function ManageTaskDialog({
 
   function removeSubTask(subtask_id: string) {
     if (editableTask) {
-      if (subTasks.find(({ subtask_id: s_id }) => s_id === subtask_id)) {
+      if (data?.subtasks.find(({ subtask_id: s_id }) => s_id === subtask_id)) {
         setDeletedSubtaskIds([...deletedSubtaskIds, subtask_id]);
         //remove the deleted task from list of updated tasks (in case it was updated before deleted)
         setUpdatedSubtasks(
@@ -167,7 +167,7 @@ export default function ManageTaskDialog({
   }
 
   function changeSubTask(subtask_id, value) {
-    const editedSubtask = subTasks.find(
+    const editedSubtask = data?.subtasks.find(
       ({ subtask_id: s_id }) => s_id === subtask_id
     );
     if (editedSubtask) {
@@ -347,7 +347,7 @@ export default function ManageTaskDialog({
                   },
                 }}
               >
-                {columns.map(({ column_id, column_title }, index) => (
+                {(columns ?? []).map(({ column_id, column_title }, index) => (
                   <MenuItem
                     key={index}
                     value={column_id}
@@ -380,7 +380,8 @@ export default function ManageTaskDialog({
               formik.values.task_description ===
                 editableTask.task_description &&
               formik.values.column_id === editableTask.column_id &&
-              subtasks.length + deletedSubtaskIds.length === subTasks.length
+              subtasks.length + deletedSubtaskIds.length ===
+                data?.subtasks.length
             }
             disableElevation
           >
