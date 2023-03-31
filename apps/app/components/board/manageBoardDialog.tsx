@@ -46,7 +46,7 @@ export default function ManageBoardDialog({
     notif.notify({ render: 'Notifying' });
     notif.update({
       type: 'ERROR',
-      render: columnsError ?? 'Something went wrong while loading columns',
+      render: columnsError?.message ?? 'Something went wrong while loading columns',
       autoClose: 3000,
       icon: () => <ReportRounded fontSize="medium" color="error" />,
     });
@@ -98,7 +98,7 @@ export default function ManageBoardDialog({
   const [boardColumns, setBoardColumns] = useState<IColumn[]>([]);
 
   if (
-    boardColumns.length + deletedColumnIds.length < columns.length &&
+    boardColumns.length + deletedColumnIds.length < columns?.length &&
     editableBoard
   )
     setBoardColumns(columns);
