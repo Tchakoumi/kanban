@@ -7,6 +7,7 @@ import { Scrollbars } from 'rc-scrollbars';
 import { useEffect } from 'react';
 import { useBoardDetails } from '../../services';
 import Column from './column';
+import ColumnSkeleton from './columnSkeleton';
 
 export default function Columns() {
   const { activeMode } = useMode();
@@ -27,7 +28,8 @@ export default function Columns() {
       notif.notify({ render: 'Notifying' });
       notif.update({
         type: 'ERROR',
-        render: columnsError?.message ?? 'Something went wrong while loading boards ',
+        render:
+          columnsError?.message ?? 'Something went wrong while loading boards ',
         autoClose: 3000,
         icon: () => <ReportRounded fontSize="medium" color="error" />,
       });
@@ -37,8 +39,20 @@ export default function Columns() {
   return (
     <Box sx={{ height: '100%' }}>
       {areColumnsLoading || !boardDetails ? (
-        'Skeleton'
-      ) : (boardDetails ? boardDetails.columns : []).length === 0 ? (
+        <Box
+          sx={{
+            display: 'grid',
+            gridAutoFlow: 'column',
+            justifyContent: 'start',
+            columnGap: 3,
+            height: '100%',
+          }}
+        >
+          {[...new Array(3)].map((_, index) => (
+            <ColumnSkeleton key={index} />
+          ))}
+        </Box>
+      ) : (boardDetails.columns ?? []).length === 0 ? (
         <Box
           sx={{
             height: '100%',
