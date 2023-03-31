@@ -2,10 +2,11 @@ import { DialogTransition } from '@kanban/dialog';
 import { ICreateColumn } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { Box, Button, Dialog, TextField, Typography } from '@mui/material';
+import randomColor from '../../common';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-export default function ManageTaskDialog({
+export default function NewColumDialog({
   isDialogOpen,
   closeDialog,
   submitDialog,
@@ -18,7 +19,7 @@ export default function ManageTaskDialog({
   const theme = generateTheme(activeMode);
 
   const initialValues: ICreateColumn = {
-    column_color_code: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+    column_color_code: randomColor(),
     column_title: '',
   };
 
