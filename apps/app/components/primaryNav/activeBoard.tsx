@@ -24,7 +24,7 @@ export default function ActiveBoard() {
 
   const {
     isLoading: areColumnsLoading,
-    data: { board_name },
+    data,
     error: columnsError,
   } = useBoardDetails(String(board_id));
 
@@ -35,7 +35,8 @@ export default function ActiveBoard() {
       notif.update({
         type: 'ERROR',
         render:
-          columnsError ?? 'Something went wrong while loading board details ',
+          columnsError?.message ??
+          'Something went wrong while loading board details ',
         autoClose: 3000,
         icon: () => <ReportRounded fontSize="medium" color="error" />,
       });
@@ -77,7 +78,7 @@ export default function ActiveBoard() {
           {areColumnsLoading ? (
             <Skeleton sx={{ maxWidth: '200px' }} />
           ) : (
-            board_name ?? 'Select a board'
+            data?.board_name ?? 'Select a board'
           )}
         </Typography>
         <Box
