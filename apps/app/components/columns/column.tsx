@@ -9,6 +9,7 @@ import Task from '../task';
 import ManageTaskDialog from '../task/manageTaskDialog';
 import TaskDetailDialog from '../task/taskDetailDialog';
 import randomColor from '../../common';
+import Scrollbars from 'rc-scrollbars';
 
 export function ColumnTitle({
   color_code,
@@ -203,7 +204,7 @@ export default function Column({
           height: '100%',
           display: 'grid',
           rowGap: 3,
-          alignContent: 'start',
+          gridTemplateRows: 'auto 1fr',
         }}
       >
         <ColumnTitle
@@ -211,24 +212,33 @@ export default function Column({
           title={title}
           totalTasks={tasks.length}
         />
-        <Box sx={{ display: 'grid', rowGap: 2.5 }}>
-          {tasks
-            .sort((a, b) => (a.task_position > b.task_position ? 1 : -1))
-            .map((task, index) => (
-              <Task
-                task={task}
-                key={index}
-                openDetails={
-                  actionnedTask === task.task_id
-                    ? null
-                    : () => {
-                        setIsTaskDetailDialogOpen(true);
-                        setOpenTask(task);
-                      }
-                }
-              />
-            ))}
-        </Box>
+        <Scrollbars autoHide universal>
+          <Box
+            sx={{
+              display: 'grid',
+              height: '100%',
+              alignContent: 'start',
+              rowGap: 2.5,
+            }}
+          >
+            {tasks
+              .sort((a, b) => (a.task_position > b.task_position ? 1 : -1))
+              .map((task, index) => (
+                <Task
+                  task={task}
+                  key={index}
+                  openDetails={
+                    actionnedTask === task.task_id
+                      ? null
+                      : () => {
+                          setIsTaskDetailDialogOpen(true);
+                          setOpenTask(task);
+                        }
+                  }
+                />
+              ))}
+          </Box>
+        </Scrollbars>
       </Box>
     </>
   );

@@ -3,7 +3,6 @@ import { useNotification } from '@kanban/toast';
 import { AddOutlined, ReportRounded } from '@mui/icons-material';
 import { Box, Button, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
-import { Scrollbars } from 'rc-scrollbars';
 import { useEffect } from 'react';
 import { useBoardDetails } from '../../services';
 import Column from './column';
@@ -80,49 +79,47 @@ export default function Columns() {
           </Button>
         </Box>
       ) : (
-        <Scrollbars autoHide universal>
+        <Box
+          sx={{
+            display: 'grid',
+            gridAutoFlow: 'column',
+            justifyContent: 'start',
+            columnGap: 3,
+            height: '100%',
+          }}
+        >
+          {boardDetails.columns
+            .sort((a, b) => (a.column_position > b.column_position ? 1 : -1))
+            .map((column, index) => (
+              <Column column={column} key={index} />
+            ))}
           <Box
             sx={{
-              display: 'grid',
-              gridAutoFlow: 'column',
-              justifyContent: 'start',
-              columnGap: 3,
+              background:
+                activeMode === 'light'
+                  ? 'linear-gradient(180deg, #E9EFFA 0%, rgba(233, 239, 250, 0.5) 100%)'
+                  : 'linear-gradient(180deg, rgba(43, 44, 55, 0.25) 0%, rgba(43, 44, 55, 0.125) 100%)',
               height: '100%',
+              display: 'grid',
+              alignItems: 'center',
+              justifyItems: 'center',
+              width: '280px',
+              marginTop: '39px',
+              borderRadius: '8px',
             }}
           >
-            {boardDetails.columns
-              .sort((a, b) => (a.column_position > b.column_position ? 1 : -1))
-              .map((column, index) => (
-                <Column column={column} key={index} />
-              ))}
-            <Box
+            <Typography
+              variant="h1"
               sx={{
-                background:
-                  activeMode === 'light'
-                    ? 'linear-gradient(180deg, #E9EFFA 0%, rgba(233, 239, 250, 0.5) 100%)'
-                    : 'linear-gradient(180deg, rgba(43, 44, 55, 0.25) 0%, rgba(43, 44, 55, 0.125) 100%)',
-                height: '100%',
-                display: 'grid',
-                alignItems: 'center',
-                justifyItems: 'center',
-                width: '280px',
-                marginTop: '39px',
-                borderRadius: '8px',
+                color: theme.common.medium_grey,
+                cursor: 'pointer',
+                '&:hover': { color: theme.palette.primary.main },
               }}
             >
-              <Typography
-                variant="h1"
-                sx={{
-                  color: theme.common.medium_grey,
-                  cursor: 'pointer',
-                  '&:hover': { color: theme.palette.primary.main },
-                }}
-              >
-                + New Column
-              </Typography>
-            </Box>
+              + New Column
+            </Typography>
           </Box>
-        </Scrollbars>
+        </Box>
       )}
     </Box>
   );
