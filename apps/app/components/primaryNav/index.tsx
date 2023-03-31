@@ -37,7 +37,7 @@ export default function PrimaryNav({
     notif.notify({ render: 'Notifying' });
     notif.update({
       type: 'ERROR',
-      render: columnsError ?? 'Something went wrong while loading columns ',
+      render: columnsError?.message ?? 'Something went wrong while loading columns ',
       autoClose: 3000,
       icon: () => <ReportRounded fontSize="medium" color="error" />,
     });
