@@ -58,9 +58,9 @@ export default function TaskDetailDialog({
   const theme = generateTheme(activeMode);
 
   const {
-    subtasks: subTasks,
+    data,
     isLoading: areSubtasksLoading,
-    error: isError,
+    error: subtasksError,
   } = useSubtasks(task_id);
   const {
     data: columns,
@@ -73,7 +73,7 @@ export default function TaskDetailDialog({
     notif.notify({ render: 'Notifying' });
     notif.update({
       type: 'ERROR',
-      render: columnsError ?? 'Something went wrong while loading ',
+      render: columnsError?.message ?? 'Something went wrong while loading ',
       autoClose: 3000,
       icon: () => <ReportRounded fontSize="medium" color="error" />,
     });
@@ -98,19 +98,19 @@ export default function TaskDetailDialog({
         notif.notify({ render: 'Notifying' });
         notif.update({
           type: 'ERROR',
-          render: isError ?? 'Something went wrong while loading ',
+          render: error?.message ?? 'Something went wrong while loading ',
           autoClose: 3000,
           icon: () => <ReportRounded fontSize="medium" color="error" />,
         });
       });
   }
 
-  if (isError) {
+  if (subtasksError) {
     const notif = new useNotification();
     notif.notify({ render: 'Notifying' });
     notif.update({
       type: 'ERROR',
-      render: isError ?? 'Something went wrong while loading ',
+      render: subtasksError?.message ?? 'Something went wrong while loading ',
       autoClose: 3000,
       icon: () => <ReportRounded fontSize="medium" color="error" />,
     });
@@ -191,7 +191,7 @@ export default function TaskDetailDialog({
                 ? [...new Array(2)].map((_, index) => (
                     <Skeleton key={index} height={48} />
                   ))
-                : subTasks.map((subtask, index) => (
+                : (data?.subtasks ?? []).map((subtask, index) => (
                     <Subtask
                       subtask={subtask}
                       key={index}
