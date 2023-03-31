@@ -30,6 +30,6 @@ import { TasksModule } from './tasks/tasks.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AppMiddleware);
+    consumer.apply(AppMiddleware).forRoutes('*');
   }
 }
