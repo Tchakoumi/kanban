@@ -11,6 +11,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import randomColor from '../../common';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -46,7 +47,8 @@ export default function ManageBoardDialog({
     notif.notify({ render: 'Notifying' });
     notif.update({
       type: 'ERROR',
-      render: columnsError?.message ?? 'Something went wrong while loading columns',
+      render:
+        columnsError?.message ?? 'Something went wrong while loading columns',
       autoClose: 3000,
       icon: () => <ReportRounded fontSize="medium" color="error" />,
     });
@@ -169,9 +171,7 @@ export default function ManageBoardDialog({
       setBoardColumns([
         ...boardColumns,
         {
-          column_color_code: `#${Math.floor(Math.random() * 16777215).toString(
-            16
-          )}`,
+          column_color_code: randomColor(),
           column_id: uuidv4(),
           column_position: 0,
           column_title: '',
