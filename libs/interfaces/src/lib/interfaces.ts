@@ -33,6 +33,7 @@ export interface ITaskDetails extends ITask {
 }
 
 export interface ICreateColumn {
+  board_id: string;
   column_title: string;
   column_color_code: string;
 }
@@ -48,7 +49,7 @@ export interface IColumnDetails extends IColumn {
 
 export interface ICreateBoard {
   board_name: string;
-  newColumns: ICreateColumn[];
+  newColumns: Omit<ICreateColumn, 'board_id'>[];
 }
 
 export interface IEditBoard extends Partial<ICreateBoard> {
