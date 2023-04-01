@@ -175,6 +175,7 @@ export default function ManageBoardDialog({
           column_id: uuidv4(),
           column_position: 0,
           column_title: '',
+          board_id: String(board_id),
         },
       ]);
   }
