@@ -28,7 +28,7 @@ export async function updateTask(
 }
 
 export async function deleteTask(task_id: string) {
-  await http.put(`/tasks/${task_id}/delete`);
+  await http.delete(`/tasks/${task_id}/delete`);
 }
 
 export async function updateSubtask(
