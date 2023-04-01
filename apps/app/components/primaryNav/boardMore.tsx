@@ -6,7 +6,12 @@ import { MoreVertOutlined, ReportRounded } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { updateBoard, useActiveBoard, useBoards } from '../../services';
+import {
+  updateBoard,
+  useActiveBoard,
+  useBoardDetails,
+  useBoards,
+} from '../../services';
 import ManageBoardDialog from '../board/manageBoardDialog';
 
 export default function BoardMore({ disabled }: { disabled: boolean }) {
@@ -18,9 +23,8 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
   } = useRouter();
 
   const { mutate: mutateBoards } = useBoards();
-  const { data: activeBoard, mutate: mutateActiveBoard } = useActiveBoard(
-    board_id as string
-  );
+  const { data: activeBoard } = useActiveBoard(board_id as string);
+  const { mutate: mutateActiveBoard } = useBoardDetails(board_id as string);
 
   function closeMenu() {
     setIsMoreMenuOpen(false);
@@ -54,6 +58,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
     notif.notify({
       render: 'Saving board modifications...',
     });
+    delete val.board_id;
     updateBoard(board_id as string, val)
       .then(() => {
         mutateBoards();
