@@ -26,11 +26,14 @@ export class ColumnsService {
     return excludeKeys(column, 'created_at', 'is_deleted');
   }
 
-  async create(newColumn: CreateColumnDto) {
-    const numberOfColumns = await this.prismaService.column.count();
+  async create({ board_id, ...newColumn }: CreateColumnDto) {
+    const numberOfColumns = await this.prismaService.column.count({
+      where: { board_id },
+    });
     const column = await this.prismaService.column.create({
       data: {
         ...newColumn,
+        Board: { connect: { board_id } },
         column_position: numberOfColumns + 1,
       },
     });

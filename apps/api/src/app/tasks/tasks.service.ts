@@ -60,7 +60,7 @@ export class TasksService {
     ...newTask
   }: CreateTaskDto): Promise<ITask> {
     const numberOfTasks = await this.prismaService.task.count({
-      where: { is_deleted: false },
+      where: { is_deleted: false, column_id },
     });
     const task = await this.prismaService.task.create({
       data: {
