@@ -5,7 +5,7 @@ import { ReportRounded } from '@mui/icons-material';
 import { Box, Skeleton, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { createNewBoard, useBoardDetails, useBoards } from '../../services';
+import { createNewBoard, useBoards } from '../../services';
 import BoardItem from './boardItem';
 import ManageBoardDialog from './manageBoardDialog';
 
@@ -14,29 +14,8 @@ export default function Boards() {
   const theme = generateTheme(activeMode);
   const {
     push,
-    query: { board_id },
+    query: { board_id: activeBoardId },
   } = useRouter();
-
-  const {
-    isLoading: areColumnsLoading,
-    data,
-    error: columnsError,
-  } = useBoardDetails(String(board_id));
-
-  useEffect(() => {
-    if (columnsError) {
-      const notif = new useNotification();
-      notif.notify({ render: 'Notifying' });
-      notif.update({
-        type: 'ERROR',
-        render:
-          columnsError?.message ??
-          'Something went wrong while loading board details ',
-        autoClose: 3000,
-        icon: () => <ReportRounded fontSize="medium" color="error" />,
-      });
-    }
-  }, [columnsError]);
 
   const {
     data: boards,
@@ -133,16 +112,16 @@ export default function Boards() {
           : boards.map(({ board_id, board_name }, index) => (
               <BoardItem
                 key={index}
-                handleClick={() => push(`/${board_id}`)}
                 title={board_name}
-                isActive={data ? data.board_id === board_id : false}
+                handleClick={() => push(`/${board_id}`)}
+                isActive={activeBoardId === board_id}
               />
             ))}
         <BoardItem
-          handleClick={() => setIsCreateBoardDialogOpen(true)}
-          title={'+Create New Board'}
           colored
-          disabled={areColumnsLoading}
+          title={'+Create New Board'}
+          disabled={isCreateBoardDialogOpen}
+          handleClick={() => setIsCreateBoardDialogOpen(true)}
         />
       </Box>
     </>
