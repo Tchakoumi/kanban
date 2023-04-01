@@ -26,9 +26,9 @@ function CustomApp(props: CustomAppProps) {
       <CacheProvider value={emotionCache}>
         <SWRConfig
           value={{
-            refreshInterval: 3000,
             errorRetryInterval: 100,
             errorRetryCount: 3,
+            revalidateOnFocus: false,
             shouldRetryOnError: false,
             fetcher,
           }}
