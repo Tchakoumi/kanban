@@ -41,6 +41,18 @@ export class TasksController {
     }
   }
 
+  @Put('subtasks/edit')
+  async updateSubtasks(@Body() updateData: UpdateSubtaskDto) {
+    try {
+      return await this.tasksService.updateSubtask(updateData);
+    } catch (error) {
+      throw new HttpException(
+        `Oops! They was an error deleting task: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
   @Put(':task_id/edit')
   async updateTask(
     @Param('task_id') task_id: string,
@@ -60,18 +72,6 @@ export class TasksController {
   async deleteTask(@Param('task_id') taskId: string) {
     try {
       return await this.tasksService.delete(taskId);
-    } catch (error) {
-      throw new HttpException(
-        `Oops! They was an error deleting task: ${error.message}`,
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-
-  @Put('subtasks/edit')
-  async updateSubtasks(@Body() updateData: UpdateSubtaskDto) {
-    try {
-      return await this.tasksService.updateSubtask(updateData);
     } catch (error) {
       throw new HttpException(
         `Oops! They was an error deleting task: ${error.message}`,

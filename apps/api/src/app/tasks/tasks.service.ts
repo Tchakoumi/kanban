@@ -198,7 +198,13 @@ export class TasksService {
         is_deleted: true,
         TaskAudits: {
           create: {
-            ...excludeKeys(task, 'created_at', 'is_deleted', 'column_id'),
+            ...excludeKeys(
+              task,
+              'task_id',
+              'created_at',
+              'is_deleted',
+              'column_id'
+            ),
           },
         },
       },
