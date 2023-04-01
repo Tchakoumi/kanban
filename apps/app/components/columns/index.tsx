@@ -213,9 +213,9 @@ export default function Columns() {
                   alignItems: 'center',
                   justifyItems: 'center',
                   width: '280px',
-                  marginTop: '39px',
                   borderRadius: '8px',
                 }}
+                onClick={() => setIsNewColumnDialogOpen(true)}
               >
                 <Typography
                   variant="h1"
