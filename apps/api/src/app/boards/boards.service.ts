@@ -28,7 +28,15 @@ export class BoardsService {
       select: {
         board_id: true,
         board_name: true,
-        Columns: { include: { Tasks: { include: { Subtasks: true } } } },
+        Columns: {
+          include: {
+            Tasks: {
+              include: { Subtasks: true },
+              orderBy: { task_position: 'asc' },
+            },
+          },
+          orderBy: { column_position: 'asc' },
+        },
       },
       where: { board_id },
     });
@@ -37,7 +45,7 @@ export class BoardsService {
     return {
       ...board,
       columns: Columns.map(({ Tasks, ...column }) => ({
-        ...excludeKeys(column, 'board_id', 'created_at', 'is_deleted'),
+        ...excludeKeys(column, 'created_at', 'is_deleted'),
         tasks: Tasks.map(({ Subtasks, ...task }) => {
           const [total_done_subtasks, total_undone_subtasks] = Subtasks.reduce(
             ([totalDone, totalUndone], { is_done }) =>
@@ -55,16 +63,15 @@ export class BoardsService {
   }
 
   async create({ board_name, newColumns }: CreateBoardDto) {
-    const numberOfColumns = await this.prismaService.column.count();
     const board = await this.prismaService.board.create({
       select: { board_id: true, board_name: true },
       data: {
         board_name,
         Columns: {
           createMany: {
-            data: newColumns.map((column) => ({
+            data: newColumns.map((column, index) => ({
               ...column,
-              column_position: numberOfColumns + 1,
+              column_position: index + 1,
             })),
           },
         },
