@@ -55,7 +55,8 @@ export default function ManageTaskDialog({
     notif.notify({ render: 'Notifying' });
     notif.update({
       type: 'ERROR',
-      render: columnsError?.message ?? 'Something went wrong while loading columns',
+      render:
+        columnsError?.message ?? 'Something went wrong while loading columns',
       autoClose: 3000,
       icon: () => <ReportRounded fontSize="medium" color="error" />,
     });
@@ -89,7 +90,7 @@ export default function ManageTaskDialog({
 
       const editedTask: IEditTask = {
         ...values,
-        task_id: editableTask.task_id,
+        task_id: editableTask?.task_id,
         deletedSubtaskIds,
         updatedSubtasks,
         newSubtasks: subtasks
@@ -119,7 +120,9 @@ export default function ManageTaskDialog({
       notif.notify({ render: 'Notifying' });
       notif.update({
         type: 'ERROR',
-        render: subtaskError?.message ?? 'Something went wrong while loading subtasks ',
+        render:
+          subtaskError?.message ??
+          'Something went wrong while loading subtasks ',
         autoClose: 3000,
         icon: () => <ReportRounded fontSize="medium" color="error" />,
       });
@@ -251,7 +254,7 @@ export default function ManageTaskDialog({
             multiline
             size="small"
             rows={3}
-            label="Title"
+            label="Description"
             placeholder="e.g. It's always good to take a break. This 15 minute break will 
             recharge the batteries a little."
             error={
