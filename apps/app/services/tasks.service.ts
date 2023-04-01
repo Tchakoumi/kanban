@@ -20,7 +20,10 @@ export async function createNewTask(newTask: ICreateTask) {
   return data;
 }
 
-export async function updateTask(task_id: string, updateData: IEditTask) {
+export async function updateTask(
+  task_id: string,
+  updateData: Omit<IEditTask, 'task_id'>
+) {
   await http.put(`/tasks/${task_id}/edit`, updateData);
 }
 
