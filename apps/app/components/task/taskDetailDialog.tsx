@@ -21,7 +21,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   updateSubtask,
   updateTask,
@@ -40,6 +40,8 @@ export default function TaskDetailDialog({
     task_description: description,
     task_title: title,
     task_id,
+    total_done_subtasks: td_s,
+    total_undone_subtasks: tu_s,
   },
   handleEdit,
   handleDelete,
@@ -56,11 +58,13 @@ export default function TaskDetailDialog({
   const { mutate } = useBoardDetails(board_id as string);
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
+  const [selectedColumnId, setSelectedColumnId] = useState<string>(c_id);
 
   const {
     data,
     isLoading: areSubtasksLoading,
     error: subtasksError,
+    mutate: mutateSubtasks,
   } = useSubtasks(task_id);
   const {
     data: columns,
@@ -68,26 +72,29 @@ export default function TaskDetailDialog({
     isLoading: areColumnsLoading,
   } = useColumns(String(board_id));
 
-  if (columnsError) {
-    const notif = new useNotification();
-    notif.notify({ render: 'Notifying' });
-    notif.update({
-      type: 'ERROR',
-      render: columnsError?.message ?? 'Something went wrong while loading ',
-      autoClose: 3000,
-      icon: () => <ReportRounded fontSize="medium" color="error" />,
-    });
-  }
+  useEffect(() => {
+    if (columnsError) {
+      const notif = new useNotification();
+      notif.notify({ render: 'Notifying' });
+      notif.update({
+        type: 'ERROR',
+        render: columnsError?.message ?? 'Something went wrong while loading ',
+        autoClose: 3000,
+        icon: () => <ReportRounded fontSize="medium" color="error" />,
+      });
+    }
+  }, [columnsError]);
 
   function changeTaskColumn(new_column_id: string) {
     updateTask(task_id, {
       newSubtasks: [],
-      task_id: task_id,
       updatedSubtasks: [],
       deletedSubtaskIds: [],
       column_id: new_column_id,
+    }).then(() => {
+      setSelectedColumnId(new_column_id);
+      mutate();
     });
-    mutate();
   }
 
   function handleCheckSubtask(subtask_id: string, new_status: boolean) {
@@ -105,16 +112,18 @@ export default function TaskDetailDialog({
       });
   }
 
-  if (subtasksError) {
-    const notif = new useNotification();
-    notif.notify({ render: 'Notifying' });
-    notif.update({
-      type: 'ERROR',
-      render: subtasksError?.message ?? 'Something went wrong while loading ',
-      autoClose: 3000,
-      icon: () => <ReportRounded fontSize="medium" color="error" />,
-    });
-  }
+  useEffect(() => {
+    if (subtasksError) {
+      const notif = new useNotification();
+      notif.notify({ render: 'Notifying' });
+      notif.update({
+        type: 'ERROR',
+        render: subtasksError?.message ?? 'Something went wrong while loading ',
+        autoClose: 3000,
+        icon: () => <ReportRounded fontSize="medium" color="error" />,
+      });
+    }
+  }, [subtasksError]);
 
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -123,6 +132,13 @@ export default function TaskDetailDialog({
     setIsMoreMenuOpen(false);
     setAnchorEl(null);
   }
+
+  useEffect(() => {
+    if (isDialogOpen) {
+      mutateSubtasks();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDialogOpen]);
 
   //TODO make change subtask status and change task column disabled during revalidating of useBoardDetails
   return (
@@ -184,7 +200,7 @@ export default function TaskDetailDialog({
             <Typography
               variant="h3"
               sx={{ color: theme.common.medium_grey }}
-            >{`Subtasks (${2} of ${3})`}</Typography>
+            >{`Subtasks (${td_s} of ${tu_s})`}</Typography>
 
             <Stack direction="column" spacing={1}>
               {areSubtasksLoading
@@ -209,7 +225,7 @@ export default function TaskDetailDialog({
               IconComponent={KeyboardArrowDownOutlined}
               fullWidth
               size="small"
-              value={c_id}
+              value={selectedColumnId}
               disabled={areColumnsLoading}
               onChange={(event) => changeTaskColumn(event.target.value)}
               sx={{ ...theme.typography.caption }}
