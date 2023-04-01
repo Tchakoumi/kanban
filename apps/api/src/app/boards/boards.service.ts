@@ -33,8 +33,10 @@ export class BoardsService {
             Tasks: {
               include: { Subtasks: true },
               orderBy: { task_position: 'asc' },
+              where: { is_deleted: false },
             },
           },
+          where: { is_deleted: false },
           orderBy: { column_position: 'asc' },
         },
       },
