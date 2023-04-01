@@ -2,9 +2,10 @@ import { DialogTransition } from '@kanban/dialog';
 import { ICreateColumn } from '@kanban/interfaces';
 import { generateTheme, useMode } from '@kanban/theme';
 import { Box, Button, Dialog, TextField, Typography } from '@mui/material';
-import randomColor from '../../common';
 import { useFormik } from 'formik';
+import { useRouter } from 'next/router';
 import * as Yup from 'yup';
+import randomColor from '../../common';
 
 export default function NewColumDialog({
   isDialogOpen,
@@ -17,10 +18,14 @@ export default function NewColumDialog({
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
+  const {
+    query: { board_id },
+  } = useRouter();
 
   const initialValues: ICreateColumn = {
-    column_color_code: randomColor(),
+    column_color_code: '#000000',
     column_title: '',
+    board_id: String(board_id),
   };
 
   const validationSchema = Yup.object().shape({
@@ -32,7 +37,7 @@ export default function NewColumDialog({
     validationSchema,
     enableReinitialize: true,
     onSubmit: (values, { resetForm }) => {
-      submitDialog(values);
+      submitDialog({ ...values, column_color_code: randomColor() });
       resetForm();
       handleClose();
     },
@@ -80,7 +85,7 @@ export default function NewColumDialog({
             helperText={
               formik.touched.column_title && formik.errors.column_title
             }
-            {...formik.getFieldProps('.column_title')}
+            {...formik.getFieldProps('column_title')}
           />
 
           <Button
