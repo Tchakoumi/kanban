@@ -1,12 +1,22 @@
-import { ICreateColumn } from '@kanban/interfaces';
-import { ApiProperty, ApiPropertyOptional, OmitType, PartialType } from '@nestjs/swagger';
+import {
+  IColumn,
+  IColumnDetails,
+  ICreateColumn
+} from '@kanban/interfaces';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  OmitType,
+  PartialType,
+} from '@nestjs/swagger';
 import {
   IsHexColor,
   IsNumber,
   IsString,
   IsUUID,
-  MaxLength
+  MaxLength,
 } from 'class-validator';
+import { Task } from '../tasks/tasks.dto';
 
 export class CreateColumnDto implements ICreateColumn {
   @IsUUID()
@@ -29,4 +39,41 @@ export class UpdateColumnDto extends PartialType(
   @IsNumber()
   @ApiPropertyOptional()
   column_position?: number;
+}
+
+export class Column implements IColumn {
+  @ApiProperty({ type: String })
+  column_id: string;
+
+  @ApiProperty({ type: Number })
+  column_position: number;
+
+  @ApiProperty({ type: String })
+  board_id: string;
+
+  @ApiProperty({ type: String })
+  column_title: string;
+
+  @ApiProperty({ type: String })
+  column_color_code: string;
+}
+
+export class ColumnDetails implements IColumnDetails {
+  @ApiProperty({ type: String })
+  column_id: string;
+
+  @ApiProperty({ type: Number })
+  column_position: number;
+
+  @ApiProperty({ type: String })
+  board_id: string;
+
+  @ApiProperty({ type: String })
+  column_title: string;
+
+  @ApiProperty({ type: String })
+  column_color_code: string;
+
+  @ApiProperty({ type: Task, isArray: true })
+  tasks: Task[];
 }

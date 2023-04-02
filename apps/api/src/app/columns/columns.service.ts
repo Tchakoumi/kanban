@@ -26,7 +26,7 @@ export class ColumnsService {
     return excludeKeys(column, 'created_at', 'is_deleted');
   }
 
-  async create({ board_id, ...newColumn }: CreateColumnDto) {
+  async create({ board_id, ...newColumn }: CreateColumnDto): Promise<IColumn> {
     const numberOfColumns = await this.prismaService.column.count({
       where: { board_id },
     });
