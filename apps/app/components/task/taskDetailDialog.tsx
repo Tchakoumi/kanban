@@ -91,6 +91,7 @@ export default function TaskDetailDialog({
       updatedSubtasks: [],
       deletedSubtaskIds: [],
       column_id: new_column_id,
+      task_id,
     }).then(() => {
       setSelectedColumnId(new_column_id);
       mutate();
