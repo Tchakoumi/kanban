@@ -81,7 +81,7 @@ model TaskAudit {
 
 model Subtask {
   subtask_id    String         @id @default(uuid()) @db.VarChar(36)
-  subtask_title String         @db.VarChar(36)
+  subtask_title String         @db.VarChar(45)
   is_done       Boolean        @default(false) @db.TinyInt
   is_deleted    Boolean        @default(false) @db.TinyInt
   created_at    DateTime       @default(now()) @db.DateTime(0)
