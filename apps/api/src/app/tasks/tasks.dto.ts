@@ -1,4 +1,11 @@
-import { ICreateSubtask, ICreateTask, IEditTask } from '@kanban/interfaces';
+import {
+  ICreateSubtask,
+  ICreateTask,
+  IEditTask,
+  ISubtask,
+  ITask,
+  ITaskDetails,
+} from '@kanban/interfaces';
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -7,7 +14,7 @@ import {
   IsNumber,
   IsString,
   IsUUID,
-  ValidateNested
+  ValidateNested,
 } from 'class-validator';
 
 export class CreateSubtaskDto implements ICreateSubtask {
@@ -63,4 +70,44 @@ export class UpdateTaskDto
   @ValidateNested({ each: true })
   @ApiProperty({ type: UpdateSubtaskDto, isArray: true })
   updatedSubtasks: UpdateSubtaskDto[];
+}
+
+export class Task implements ITask {
+  @ApiProperty({ type: String })
+  task_id: string;
+
+  @ApiProperty({ type: Number })
+  task_position: number;
+
+  @ApiProperty({ type: Number })
+  total_done_subtasks: number;
+
+  @ApiProperty({ type: Number })
+  total_undone_subtasks: number;
+
+  @ApiProperty({ type: String })
+  column_id: string;
+
+  @ApiProperty({ type: String })
+  task_title: string;
+
+  @ApiProperty({ type: String })
+  task_description: string;
+}
+
+export class Subtask implements ISubtask {
+  @ApiProperty({ type: String })
+  subtask_id: string;
+
+  @ApiProperty({ type: String })
+  subtask_title: string;
+
+  @ApiProperty({ type: Boolean })
+  is_done: boolean;
+}
+
+export class TaskDetails extends Task implements ITaskDetails {
+  @IsArray()
+  @ApiProperty({ type: Subtask, isArray: true })
+  subtasks: Subtask[];
 }

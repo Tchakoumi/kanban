@@ -10,8 +10,14 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { CreateTaskDto, UpdateSubtaskDto, UpdateTaskDto } from './tasks.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  CreateTaskDto,
+  Task,
+  TaskDetails,
+  UpdateSubtaskDto,
+  UpdateTaskDto,
+} from './tasks.dto';
 import { TasksService } from './tasks.service';
 
 @ApiTags('Tasks')
@@ -20,16 +26,27 @@ export class TasksController {
   constructor(private tasksService: TasksService) {}
 
   @Get()
+  @ApiResponse({
+    type: Task,
+    isArray: true,
+  })
+  @ApiOperation({ description: 'Get all tasks under a given column' })
   async getTasks(@Query('column_id') columnId: string) {
     return await this.tasksService.findAll(columnId);
   }
 
   @Get(':task_id/details')
+  @ApiResponse({ type: TaskDetails })
+  @ApiOperation({ description: 'Get given task and its subtasks' })
   async getTaskDetails(@Param('task_id') task_id: string) {
     return this.tasksService.findOne(task_id);
   }
 
   @Post('new')
+  @ApiResponse({ type: Task })
+  @ApiOperation({
+    description: 'Create a new task and returns the newly created task',
+  })
   async createNewTask(@Body() newTask: CreateTaskDto) {
     try {
       return await this.tasksService.create(newTask);
@@ -42,6 +59,7 @@ export class TasksController {
   }
 
   @Put('subtasks/edit')
+  @ApiOperation({ description: "Update task's subtask" })
   async updateSubtasks(@Body() updateData: UpdateSubtaskDto) {
     try {
       return await this.tasksService.updateSubtask(updateData);
@@ -54,6 +72,7 @@ export class TasksController {
   }
 
   @Put(':task_id/edit')
+  @ApiOperation({ description: "Update task and task's subtasks" })
   async updateTask(
     @Param('task_id') task_id: string,
     @Body() updateData: UpdateTaskDto
@@ -69,6 +88,7 @@ export class TasksController {
   }
 
   @Delete(':task_id/delete')
+  @ApiOperation({ description: 'Delete given task' })
   async deleteTask(@Param('task_id') taskId: string) {
     try {
       return await this.tasksService.delete(taskId);
