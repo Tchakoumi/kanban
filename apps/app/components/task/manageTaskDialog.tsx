@@ -62,10 +62,10 @@ export default function ManageTaskDialog({
     });
   }
 
-  const initialValues: Omit<ICreateTask, 'newSubtasks'> = editableTask ?? {
-    column_id: '',
-    task_description: '',
-    task_title: '',
+  const initialValues: Omit<ICreateTask, 'newSubtasks'> = {
+    column_id: editableTask?.column_id ?? '',
+    task_description: editableTask?.task_description ?? '',
+    task_title: editableTask?.task_title ?? '',
   };
 
   const validationSchema = Yup.object().shape({
