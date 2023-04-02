@@ -10,9 +10,7 @@ import {
 import useSWR from 'swr';
 
 export function useSubtasks(task_id: string) {
-  return useSWR<ITaskDetails>(
-    `/tasks/${task_id?.length === 0 ?? task_id}/details`
-  );
+  return useSWR<ITaskDetails>(`/tasks/${task_id}/details`);
 }
 
 export async function createNewTask(newTask: ICreateTask) {

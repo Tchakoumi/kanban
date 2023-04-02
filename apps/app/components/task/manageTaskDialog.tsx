@@ -107,12 +107,12 @@ export default function ManageTaskDialog({
       handleClose();
     },
   });
-
+  //TODO find a way to conditionally fetch data with swr
   const {
     data,
     isLoading: areSubtasksLoading,
     error: subtaskError,
-  } = useSubtasks(editableTask ? editableTask.task_id : '');
+  } = useSubtasks(editableTask ? editableTask.task_id : 'default');
 
   if (subtaskError) {
     if (subtaskError !== 'errorForEmptyStringTaskId') {
