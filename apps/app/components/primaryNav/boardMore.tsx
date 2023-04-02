@@ -7,6 +7,7 @@ import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import {
+  deleteBoard,
   updateBoard,
   useActiveBoard,
   useBoardDetails,
@@ -34,7 +35,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
   const [isConfirmDeleteBoardDialogOpen, setIsConfirmDeleteBoardDialogOpen] =
     useState<boolean>(false);
 
-  function deleteBoard() {
+  function deleteBoardHandler() {
     if (activeBoard) setIsConfirmDeleteBoardDialogOpen(true);
     else alert('No active board');
   }
@@ -88,6 +89,44 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
       .finally(() => setIsSubmitting(false));
   }
 
+  function deleteActiveBoard(activeBoardId: string) {
+    setIsSubmitting(true);
+    const notif = new useNotification();
+    if (submissionNotif) {
+      submissionNotif.dismiss();
+    }
+    setSubmissionNotif(notif);
+    notif.notify({
+      render: `Deleting ${activeBoard.board_name} board...`,
+    });
+    deleteBoard(activeBoard.board_id)
+      .then(() => {
+        mutateBoards();
+        mutateActiveBoard();
+        notif.update({
+          render: 'Board deleted sucessfully!',
+        });
+        setSubmissionNotif(undefined);
+      })
+      .catch((error) => {
+        notif.update({
+          type: 'ERROR',
+          render: (
+            <ErrorMessage
+              retryFunction={() => deleteActiveBoard(activeBoardId)}
+              notification={notif}
+              message={
+                error?.message ||
+                'Something went wrong while saving board. Please try again!!!'
+              }
+            />
+          ),
+          autoClose: 2000,
+          icon: () => <ReportRounded fontSize="medium" color="error" />,
+        });
+      });
+  }
+
   return (
     <>
       <ManageBoardDialog
@@ -104,7 +143,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
         danger
         dialogTitle="Delete this board?"
         confirm={() => {
-          alert(`delete activeBoard element`);
+          deleteActiveBoard(activeBoard.board_id);
           push('/');
         }}
       />
@@ -146,7 +185,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
         <MenuItem
           onClick={() => {
             closeMenu();
-            deleteBoard();
+            deleteBoardHandler();
           }}
           sx={{
             color: generateTheme().palette.error.main,
