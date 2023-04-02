@@ -67,14 +67,14 @@ export default function ManageBoardDialog({
     validationSchema,
     enableReinitialize: true,
     onSubmit: (values, { resetForm }) => {
-      const newTask: ICreateBoard = {
+      const newBoard: ICreateBoard = {
         ...values,
         newColumns: boardColumns.map(({ column_title, column_color_code }) => {
           return { column_title, column_color_code };
         }),
       };
 
-      const editedTask: IEditBoard = {
+      const editedBoard: IEditBoard = {
         ...values,
         board_id: String(board_id),
         deletedColumnIds,
@@ -88,7 +88,7 @@ export default function ManageBoardDialog({
             return { column_color_code, column_title };
           }),
       };
-      submitDialog(editableBoard ? editedTask : newTask);
+      submitDialog(editableBoard ? editedBoard : newBoard);
       resetForm();
       handleClose();
     },
