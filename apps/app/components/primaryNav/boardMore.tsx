@@ -24,8 +24,10 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
   } = useRouter();
 
   const { mutate: mutateBoards } = useBoards();
-  const { data: activeBoard } = useActiveBoard(board_id as string);
-  const { mutate: mutateActiveBoard } = useBoardDetails(board_id as string);
+  const { data: activeBoard, mutate: mutateActiveBoard } = useActiveBoard(
+    board_id as string
+  );
+  const { mutate: mutateBoardDetails } = useBoardDetails(board_id as string);
 
   function closeMenu() {
     setIsMoreMenuOpen(false);
@@ -63,6 +65,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
     updateBoard(board_id as string, val)
       .then(() => {
         mutateBoards();
+        mutateBoardDetails();
         mutateActiveBoard();
         notif.update({
           render: 'Board saved!',
@@ -102,7 +105,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
     deleteBoard(activeBoard.board_id)
       .then(() => {
         mutateBoards();
-        mutateActiveBoard();
+        mutateBoardDetails();
         notif.update({
           render: 'Board deleted sucessfully!',
         });
