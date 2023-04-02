@@ -64,7 +64,7 @@ export class BoardsService {
     };
   }
 
-  async create({ board_name, newColumns }: CreateBoardDto) {
+  async create({ board_name, newColumns }: CreateBoardDto): Promise<IBoard> {
     const board = await this.prismaService.board.create({
       select: { board_id: true, board_name: true },
       data: {

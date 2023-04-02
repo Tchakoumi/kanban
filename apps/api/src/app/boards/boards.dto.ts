@@ -1,4 +1,9 @@
-import { ICreateBoard, IEditBoard } from '@kanban/interfaces';
+import {
+  IBoard,
+  IBoardDetails,
+  ICreateBoard,
+  IEditBoard,
+} from '@kanban/interfaces';
 import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -8,7 +13,11 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { CreateColumnDto, UpdateColumnDto } from '../columns/columns.dto';
+import {
+  ColumnDetails,
+  CreateColumnDto,
+  UpdateColumnDto,
+} from '../columns/columns.dto';
 
 export class CreateColumnWithBoard extends OmitType(CreateColumnDto, [
   'board_id',
@@ -46,4 +55,17 @@ export class UpdateBoardDto
   @ValidateNested({ each: true })
   @Type(() => UpdateColumnWithBoard)
   updatedColumns: UpdateColumnWithBoard[];
+}
+
+export class Board implements IBoard {
+  @ApiProperty({ type: String })
+  board_id: string;
+
+  @ApiProperty({ type: String })
+  board_name: string;
+}
+
+export class BoardDetails extends Board implements IBoardDetails {
+  @ApiProperty({ type: ColumnDetails, isArray: true })
+  columns: ColumnDetails[];
 }
