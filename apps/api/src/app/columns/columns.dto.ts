@@ -1,12 +1,11 @@
 import { ICreateColumn } from '@kanban/interfaces';
-import { ApiProperty, OmitType, PartialType } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, OmitType, PartialType } from '@nestjs/swagger';
 import {
   IsHexColor,
   IsNumber,
-  IsOptional,
   IsString,
   IsUUID,
-  MaxLength,
+  MaxLength
 } from 'class-validator';
 
 export class CreateColumnDto implements ICreateColumn {
@@ -28,7 +27,6 @@ export class UpdateColumnDto extends PartialType(
   OmitType(CreateColumnDto, ['board_id'])
 ) {
   @IsNumber()
-  @IsOptional()
-  @ApiProperty()
+  @ApiPropertyOptional()
   column_position?: number;
 }
