@@ -1,8 +1,4 @@
-import {
-  IColumn,
-  IColumnDetails,
-  ICreateColumn
-} from '@kanban/interfaces';
+import { IColumn, IColumnDetails, ICreateColumn } from '@kanban/interfaces';
 import {
   ApiProperty,
   ApiPropertyOptional,
@@ -12,6 +8,7 @@ import {
 import {
   IsHexColor,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   MaxLength,
@@ -37,6 +34,7 @@ export class UpdateColumnDto extends PartialType(
   OmitType(CreateColumnDto, ['board_id'])
 ) {
   @IsNumber()
+  @IsOptional()
   @ApiPropertyOptional()
   column_position?: number;
 }

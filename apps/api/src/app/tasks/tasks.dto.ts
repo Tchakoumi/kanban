@@ -12,6 +12,7 @@ import {
   IsArray,
   IsBoolean,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
@@ -49,6 +50,7 @@ export class UpdateSubtaskDto extends PartialType(CreateSubtaskDto) {
   subtask_id: string;
 
   @IsBoolean()
+  @IsOptional()
   @ApiPropertyOptional()
   is_done?: boolean;
 }
@@ -58,6 +60,7 @@ export class UpdateTaskDto
   implements Omit<IEditTask, 'task_id'>
 {
   @IsNumber()
+  @IsOptional()
   @ApiPropertyOptional()
   task_position?: number;
 
