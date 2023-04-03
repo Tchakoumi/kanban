@@ -60,7 +60,6 @@ export default function Layout({
               </Box>
             </Tooltip>
             {children}
-            {/* <Columns columns={[]} /> */}
           </Box>
         </Box>
       </Box>
