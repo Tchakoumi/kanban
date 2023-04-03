@@ -2,8 +2,12 @@ import { decrypt, encrypt } from '@kanban/encrypter';
 import axios, { AxiosInstance } from 'axios';
 
 export function getAxiosInstance(): AxiosInstance {
+  const API_BASE_URL =
+    process.env['NODE_ENV'] === 'production'
+      ? 'https://kanban-api.ingl.io/api'
+      : 'http://localhost:4000/api';
   const axiosInstance = axios.create({
-    baseURL: process.env['NX_API_BASE_URL'] || 'http://localhost:4000/api',
+    baseURL: API_BASE_URL,
   });
   axiosInstance.interceptors.request.use(
     (request) => {
