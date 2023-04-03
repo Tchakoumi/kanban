@@ -1,8 +1,6 @@
 import { AES as Encrypter, enc } from 'crypto-js';
 
-const CRYPTJS_SECRET = `${
-  process.env['CRYPTJS_SECRET'] ?? process.env['NX_CRYPTJS_SECRET']
-}`;
+const CRYPTJS_SECRET = 'crypting_secret_for_network_lines';
 
 export type ColumnType = string | number | boolean | Date | null;
 export type CustomRecord = Record<string, ColumnType>;

@@ -16,7 +16,6 @@ services:
       - DATABASE_URL=mysql://root:12345678@mysql_container:3306/kanban_db
       - PORT=8080
       - NODE_ENV=production
-      - CRYPTJS_SECRET=crypting_secret_for_network_lines
     ports:
       - "81:8080"
     depends_on:
@@ -26,8 +25,6 @@ services:
       dockerfile: ./Dockerfile.app
       context: .
     restart: always
-    environment:
-      - NX_CRYPTJS_SECRET=crypting_secret_for_network_lines
     ports:
       - "82:3000"
     depends_on:
