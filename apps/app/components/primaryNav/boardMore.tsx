@@ -152,16 +152,18 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
       />
 
       <Tooltip arrow title="more">
-        <IconButton
-          disabled={disabled || isSubmitting}
-          size="small"
-          onClick={(event) => {
-            setIsMoreMenuOpen(true);
-            setAnchorEl(event.currentTarget);
-          }}
-        >
-          <MoreVertOutlined />
-        </IconButton>
+        <span>
+          <IconButton
+            disabled={disabled || isSubmitting}
+            size="small"
+            onClick={(event) => {
+              setIsMoreMenuOpen(true);
+              setAnchorEl(event.currentTarget);
+            }}
+          >
+            <MoreVertOutlined />
+          </IconButton>
+        </span>
       </Tooltip>
       <Menu
         elevation={0}

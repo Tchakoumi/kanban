@@ -189,43 +189,45 @@ export default function PrimaryNav({
                 },
               }}
             >
-              <Button
-                color="primary"
-                variant="contained"
-                disabled={
-                  !activeBoard || areColumnsLoading || columns.length === 0
-                }
-                startIcon={<AddOutlined />}
-                onClick={() => setIsAddDialogOpen(true)}
-                sx={{
-                  '&:disabled': {
-                    backgroundColor: 'rgba(99, 95, 199, 1)',
-                  },
-                  '& .MuiButton-startIcon': {
-                    marginRight: {
-                      mobile: 0,
-                      tablet: 1,
-                    },
-                    marginLeft: {
-                      mobile: 0,
-                      tablet: -0.5,
-                    },
-                  },
-                }}
-              >
-                <Typography
-                  variant="button"
+              <span>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  disabled={
+                    !activeBoard || areColumnsLoading || columns.length === 0
+                  }
+                  startIcon={<AddOutlined />}
+                  onClick={() => setIsAddDialogOpen(true)}
                   sx={{
-                    textTransform: 'none',
-                    display: {
-                      tablet: 'block',
-                      mobile: 'none',
+                    '&:disabled': {
+                      backgroundColor: 'rgba(99, 95, 199, 1)',
+                    },
+                    '& .MuiButton-startIcon': {
+                      marginRight: {
+                        mobile: 0,
+                        tablet: 1,
+                      },
+                      marginLeft: {
+                        mobile: 0,
+                        tablet: -0.5,
+                      },
                     },
                   }}
                 >
-                  Add New Task
-                </Typography>
-              </Button>
+                  <Typography
+                    variant="button"
+                    sx={{
+                      textTransform: 'none',
+                      display: {
+                        tablet: 'block',
+                        mobile: 'none',
+                      },
+                    }}
+                  >
+                    Add New Task
+                  </Typography>
+                </Button>
+              </span>
             </Tooltip>
             <BoardMore disabled={!activeBoard} />
           </Box>
