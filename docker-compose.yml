@@ -1,0 +1,34 @@
+version: '3.3'
+
+services:
+  mysql_container:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+      - MYSQL_DATABASE=kanban_db
+    command: mysqld --sql_mode=""
+  api:
+    build:
+      dockerfile: ./Dockerfile.api
+      context: .
+    restart: always
+    environment:
+      - DATABASE_URL=mysql://root:12345678@mysql_container:3306/kanban_db
+      - APP_PORT=8080
+      - NODE_ENV=production
+      - CRYPTJS_SECRET=crypting_secret_for_network_lines
+    ports:
+      - "95:8080"
+    depends_on:
+      - mysql_container
+  app:
+    build:
+      dockerfile: ./Dockerfile.app
+      context: .
+    restart: always
+    environment:
+      - NX_CRYPTJS_SECRET=crypting_secret_for_network_lines
+    ports:
+      - "96:3000"
+    depends_on:
+      - api
