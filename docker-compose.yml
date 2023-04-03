@@ -18,7 +18,7 @@ services:
       - NODE_ENV=production
       - CRYPTJS_SECRET=crypting_secret_for_network_lines
     ports:
-      - "95:8080"
+      - "81:8080"
     depends_on:
       - mysql_container
   app:
@@ -29,6 +29,6 @@ services:
     environment:
       - NX_CRYPTJS_SECRET=crypting_secret_for_network_lines
     ports:
-      - "96:3000"
+      - "82:3000"
     depends_on:
       - api
