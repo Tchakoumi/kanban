@@ -109,6 +109,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
         notif.update({
           render: 'Board deleted sucessfully!',
         });
+        push('/');
         setSubmissionNotif(undefined);
       })
       .catch((error) => {
