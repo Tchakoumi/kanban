@@ -31,6 +31,7 @@ import * as shell from 'shelljs';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    console.log("Hello world", process.env.DATABASE_URL);
     if (process.env.NODE_ENV === 'production') {
       console.log(process.env.DATABASE_URL);
       shell.exec(`npx prisma migrate dev --name deploy`);
