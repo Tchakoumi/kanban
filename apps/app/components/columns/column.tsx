@@ -3,13 +3,12 @@ import { IColumnDetails, IEditTask, ITask } from '@kanban/interfaces';
 import { ErrorMessage, useNotification } from '@kanban/toast';
 import { ReportRounded } from '@mui/icons-material';
 import { Box, Skeleton, Typography } from '@mui/material';
-import { deleteTask, updateTask, useActiveBoard } from '../../services';
+import Scrollbars from 'rc-scrollbars';
 import { CSSProperties, useState } from 'react';
+import { deleteTask, updateTask, useActiveBoard } from '../../services';
 import Task from '../task';
 import ManageTaskDialog from '../task/manageTaskDialog';
 import TaskDetailDialog from '../task/taskDetailDialog';
-import randomColor from '../../common';
-import Scrollbars from 'rc-scrollbars';
 
 export function ColumnTitle({
   color_code,
@@ -34,7 +33,7 @@ export function ColumnTitle({
     >
       <Box
         sx={{
-          backgroundColor: skeleton ? randomColor() : color_code,
+          backgroundColor: skeleton ? '#33023f2' : color_code,
           height: '15px',
           width: '15px',
           borderRadius: '100%',
