@@ -10,6 +10,7 @@ import { BoardsModule } from './boards/boards.module';
 import { ColumnsModule } from './columns/columns.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { TasksModule } from './tasks/tasks.module';
+import * as shell from 'shelljs';
 
 @Module({
   imports: [
@@ -30,6 +31,11 @@ import { TasksModule } from './tasks/tasks.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    if (process.env.NODE_ENV === 'production') {
+      console.log(process.env.DATABASE_URL);
+      shell.exec(`npx prisma migrate dev --name deploy`);
+      shell.exec(`npx prisma migrate deploy`);
+    }
     consumer.apply(AppMiddleware).forRoutes('*');
   }
 }
