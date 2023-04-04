@@ -5,7 +5,7 @@ import {
   KeyboardArrowUpOutlined,
   ReportRounded,
 } from '@mui/icons-material';
-import { Box, Menu, Skeleton, Typography } from '@mui/material';
+import { Box, Menu, Skeleton, Tooltip, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useBoardDetails } from '../../services';
@@ -17,6 +17,7 @@ export default function ActiveBoard() {
   const theme = generateTheme(activeMode);
   const {
     query: { board_id },
+    pathname,
   } = useRouter();
 
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<boolean>(false);
@@ -62,25 +63,37 @@ export default function ActiveBoard() {
           setAnchorEl(event.currentTarget);
         }}
       >
-        <Typography
-          variant="h1"
-          sx={{
-            fontSize: {
-              mobile: theme.typography.h2.fontSize,
-              tablet: theme.typography.h1.fontSize,
-            },
-            overflow: 'hidden',
-            wordBreak: 'initial',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
+        <Tooltip
+          arrow
+          title={
+            data?.board_name ?? pathname === '/dashboard'
+              ? 'Platform Usage Statistics'
+              : 'Select a board'
+          }
+          followCursor
         >
-          {areColumnsLoading ? (
-            <Skeleton sx={{ maxWidth: '200px' }} />
-          ) : (
-            data?.board_name ?? 'Select a board'
-          )}
-        </Typography>
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: {
+                mobile: theme.typography.h2.fontSize,
+                tablet: theme.typography.h1.fontSize,
+              },
+              overflow: 'hidden',
+              wordBreak: 'initial',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {areColumnsLoading ? (
+              <Skeleton sx={{ maxWidth: '200px' }} />
+            ) : data?.board_name ?? pathname === '/dashboard' ? (
+              'Platform Usage Statistics'
+            ) : (
+              'Select a board'
+            )}
+          </Typography>
+        </Tooltip>
         <Box
           sx={{
             display: {
