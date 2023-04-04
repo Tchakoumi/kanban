@@ -66,9 +66,10 @@ export default function ActiveBoard() {
         <Tooltip
           arrow
           title={
-            data?.board_name ?? pathname === '/dashboard'
+            data?.board_name ??
+            (pathname === '/dashboard'
               ? 'Platform Usage Statistics'
-              : 'Select a board'
+              : 'Select a board')
           }
           followCursor
         >
