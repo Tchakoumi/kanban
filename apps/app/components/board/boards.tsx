@@ -4,6 +4,7 @@ import { ErrorMessage, useNotification } from '@kanban/toast';
 import { ReportRounded } from '@mui/icons-material';
 import { Box, Skeleton, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+import Scrollbars from 'rc-scrollbars';
 import { useEffect, useState } from 'react';
 import { createNewBoard, useBoards } from '../../services';
 import BoardItem from './boardItem';
@@ -88,43 +89,61 @@ export default function Boards() {
         isDialogOpen={isCreateBoardDialogOpen}
         submitDialog={createBoardHandler}
       />
-      <Box sx={{ display: 'grid', rowGap: 1 }}>
-        <Typography
-          sx={{
-            padding: 1.1875,
-            paddingLeft: 2,
-            paddingRight: 2,
-            ...theme.typography.h3,
-            letterSpacing: '2.4px',
-            textTransform: 'uppercase',
-            color: theme.common.medium_grey,
-          }}
-        >{`all boards (${boards ? boards.length : 0})`}</Typography>
-        {!boards || areBoardsLoading
-          ? [...new Array(3)].map((_, index) => (
-              <Skeleton
-                height="68px"
-                key={index}
-                sx={{
-                  borderTopRightRadius: '30px',
-                  borderBottomRightRadius: '30px',
-                }}
-              />
-            ))
-          : boards.map(({ board_id, board_name }, index) => (
-              <BoardItem
-                key={index}
-                title={board_name}
-                handleClick={() => push(`/${board_id}`)}
-                isActive={activeBoardId === board_id}
-              />
-            ))}
-        <BoardItem
-          colored
-          title={'+Create New Board'}
-          disabled={isCreateBoardDialogOpen}
-          handleClick={() => setIsCreateBoardDialogOpen(true)}
-        />
+      <Box
+        sx={{
+          height: '100%',
+          display: 'grid',
+          gridTemplateRows: '1fr auto',
+          rowGap: 1,
+        }}
+      >
+        <Scrollbars autoHide universal>
+          <Box
+            sx={{
+              display: 'grid',
+              rowGap: 1,
+              height: '100%',
+              alignContent: 'start',
+            }}
+          >
+            <Typography
+              sx={{
+                padding: 1.1875,
+                paddingLeft: 2,
+                paddingRight: 2,
+                ...theme.typography.h3,
+                letterSpacing: '2.4px',
+                textTransform: 'uppercase',
+                color: theme.common.medium_grey,
+              }}
+            >{`all boards (${boards ? boards.length : 0})`}</Typography>
+            {!boards || areBoardsLoading
+              ? [...new Array(3)].map((_, index) => (
+                  <Skeleton
+                    height="68px"
+                    key={index}
+                    sx={{
+                      borderTopRightRadius: '30px',
+                      borderBottomRightRadius: '30px',
+                    }}
+                  />
+                ))
+              : boards.map(({ board_id, board_name }, index) => (
+                  <BoardItem
+                    key={index}
+                    title={board_name}
+                    handleClick={() => push(`/${board_id}`)}
+                    isActive={activeBoardId === board_id}
+                  />
+                ))}
+            <BoardItem
+              colored
+              title={'+Create New Board'}
+              disabled={isCreateBoardDialogOpen}
+              handleClick={() => setIsCreateBoardDialogOpen(true)}
+            />
+          </Box>
+        </Scrollbars>
         <BoardItem
           colored
           dashboard
