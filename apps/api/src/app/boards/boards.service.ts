@@ -89,9 +89,9 @@ export class BoardsService {
     const {
       board_name: oldName,
       _count: { Columns: numberOfColumns },
-    } = await this.prismaService.board.findUniqueOrThrow({
+    } = await this.prismaService.board.findFirstOrThrow({
       select: { board_name: true, _count: { select: { Columns: true } } },
-      where: { board_id },
+      where: { board_id, is_deleted: false },
     });
     const auditedColumns = await this.prismaService.column.findMany({
       where: {
@@ -142,9 +142,9 @@ export class BoardsService {
   }
 
   async delete(board_id: string) {
-    const { board_name } = await this.prismaService.board.findUniqueOrThrow({
+    const { board_name } = await this.prismaService.board.findFirstOrThrow({
       select: { board_name: true },
-      where: { board_id },
+      where: { board_id, is_deleted: false },
     });
     await this.prismaService.board.update({
       data: {

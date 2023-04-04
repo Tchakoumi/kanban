@@ -13,7 +13,7 @@ export class TasksService {
     const tasks = await this.prismaService.task.findMany({
       orderBy: { task_position: 'asc' },
       include: { Subtasks: { select: { is_done: true } } },
-      where: { is_deleted: false, column_id },
+      where: { is_deleted: false, Column: { column_id, is_deleted: false } },
     });
     return tasks.map(({ Subtasks, ...task }) => {
       const [total_done_subtasks, total_undone_subtasks] = Subtasks.reduce(
@@ -30,14 +30,14 @@ export class TasksService {
   }
 
   async findOne(task_id: string): Promise<ITaskDetails> {
-    const uniqueTask = await this.prismaService.task.findUnique({
+    const uniqueTask = await this.prismaService.task.findFirst({
       include: {
         Subtasks: {
           select: { subtask_id: true, subtask_title: true, is_done: true },
           where: { is_deleted: false },
         },
       },
-      where: { task_id },
+      where: { task_id, is_deleted: false, Column: { is_deleted: false } },
     });
     if (!uniqueTask) return null;
     const { Subtasks, ...task } = uniqueTask;
@@ -59,6 +59,9 @@ export class TasksService {
     column_id,
     ...newTask
   }: CreateTaskDto): Promise<ITask> {
+    await this.prismaService.column.findFirstOrThrow({
+      where: { is_deleted: false, column_id, Board: { is_deleted: false } },
+    });
     const numberOfTasks = await this.prismaService.task.count({
       where: { is_deleted: false, column_id },
     });
@@ -91,8 +94,8 @@ export class TasksService {
       ...newTask
     }: UpdateTaskDto
   ) {
-    const task = await this.prismaService.task.findUniqueOrThrow({
-      where: { task_id },
+    const task = await this.prismaService.task.findFirstOrThrow({
+      where: { task_id, is_deleted: false, Column: { is_deleted: false } },
     });
     const auditedSubtasks = await this.prismaService.subtask.findMany({
       where: {
@@ -190,8 +193,8 @@ export class TasksService {
   }
 
   async delete(task_id: string) {
-    const task = await this.prismaService.task.findUniqueOrThrow({
-      where: { task_id },
+    const task = await this.prismaService.task.findFirstOrThrow({
+      where: { task_id, is_deleted: false, Column: { is_deleted: false } },
     });
     await this.prismaService.task.update({
       data: {

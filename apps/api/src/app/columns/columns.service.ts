@@ -12,7 +12,7 @@ export class ColumnsService {
   async findAll(board_id: string): Promise<IColumn[]> {
     const columns = await this.prismaService.column.findMany({
       orderBy: { column_position: 'asc' },
-      where: { is_deleted: false, board_id },
+      where: { is_deleted: false, Board: { board_id, is_deleted: false } },
     });
     return columns.map((column) =>
       excludeKeys(column, 'created_at', 'is_deleted')
@@ -20,13 +20,20 @@ export class ColumnsService {
   }
 
   async findOne(column_id: string): Promise<IColumn> {
-    const column = await this.prismaService.column.findUniqueOrThrow({
-      where: { column_id },
+    const column = await this.prismaService.column.findFirstOrThrow({
+      where: {
+        column_id,
+        is_deleted: false,
+        Board: { is_deleted: false },
+      },
     });
     return excludeKeys(column, 'created_at', 'is_deleted');
   }
 
   async create({ board_id, ...newColumn }: CreateColumnDto): Promise<IColumn> {
+    await this.prismaService.board.findFirstOrThrow({
+      where: { is_deleted: false, board_id },
+    });
     const numberOfColumns = await this.prismaService.column.count({
       where: { board_id },
     });
@@ -44,8 +51,8 @@ export class ColumnsService {
     column_id: string,
     { column_position, ...updateData }: UpdateColumnDto
   ) {
-    const column = await this.prismaService.column.findUniqueOrThrow({
-      where: { column_id },
+    const column = await this.prismaService.column.findFirstOrThrow({
+      where: { column_id, is_deleted: false, Board: { is_deleted: false } },
     });
 
     const hasColumnPositionChanged =
@@ -112,8 +119,8 @@ export class ColumnsService {
   }
 
   async delete(column_id: string) {
-    const column = await this.prismaService.column.findUniqueOrThrow({
-      where: { column_id },
+    const column = await this.prismaService.column.findFirstOrThrow({
+      where: { column_id, is_deleted: false, Board: { is_deleted: false } },
     });
     await this.prismaService.column.update({
       data: {
