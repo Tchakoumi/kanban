@@ -12,6 +12,7 @@ import {
   useActiveBoard,
   useBoardDetails,
   useBoards,
+  useColumns,
 } from '../../services';
 import ManageBoardDialog from '../board/manageBoardDialog';
 
@@ -24,6 +25,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
   } = useRouter();
 
   const { mutate: mutateBoards } = useBoards();
+  const { mutate: mutateColumns } = useColumns(board_id as string);
   const { data: activeBoard, mutate: mutateActiveBoard } = useActiveBoard(
     board_id as string
   );
@@ -67,6 +69,7 @@ export default function BoardMore({ disabled }: { disabled: boolean }) {
         mutateBoards();
         mutateBoardDetails();
         mutateActiveBoard();
+        mutateColumns();
         notif.update({
           render: 'Board saved!',
         });

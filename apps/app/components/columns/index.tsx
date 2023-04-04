@@ -11,6 +11,7 @@ import {
   createNewColumn,
   useBoardDetails,
   useBoards,
+  useColumns,
 } from '../../services';
 import ManageBoardDialog from '../board/manageBoardDialog';
 import Column from './column';
@@ -24,6 +25,8 @@ export default function Columns() {
     query: { board_id },
     push,
   } = useRouter();
+
+  const { mutate: mutateColumns } = useColumns(board_id as string);
 
   const {
     isLoading: areColumnsLoading,
@@ -108,6 +111,7 @@ export default function Columns() {
         notif.update({
           render: 'Created column successfully',
         });
+        mutateColumns();
         setSubmissionNotif(undefined);
         mutateActiveBoard();
       })
