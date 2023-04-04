@@ -14,6 +14,7 @@ export default function Boards() {
   const theme = generateTheme(activeMode);
   const {
     push,
+    pathname,
     query: { board_id: activeBoardId },
   } = useRouter();
 
@@ -122,6 +123,14 @@ export default function Boards() {
           title={'+Create New Board'}
           disabled={isCreateBoardDialogOpen}
           handleClick={() => setIsCreateBoardDialogOpen(true)}
+        />
+        <BoardItem
+          colored
+          dashboard
+          title={'Platform Dashboard'}
+          disabled={false}
+          isActive={pathname === '/dashboard'}
+          handleClick={() => push('/dashboard')}
         />
       </Box>
     </>
