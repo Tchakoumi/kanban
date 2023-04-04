@@ -92,6 +92,7 @@ export default function Boards() {
       <Box
         sx={{
           height: '100%',
+          minHeight:'250px',
           display: 'grid',
           gridTemplateRows: '1fr auto',
           rowGap: 1,
