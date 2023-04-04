@@ -30,7 +30,6 @@ export function getAxiosInstance(): AxiosInstance {
       return response;
     },
     (error) => {
-      console.log(error);
       return Promise.reject(
         error.response?.data ||
           error.message ||
