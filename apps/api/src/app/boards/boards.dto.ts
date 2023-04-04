@@ -51,9 +51,9 @@ export class UpdateBoardDto
   deletedColumnIds: string[];
 
   @IsArray()
-  @ApiProperty()
   @ValidateNested({ each: true })
   @Type(() => UpdateColumnWithBoard)
+  @ApiProperty({ type: UpdateColumnWithBoard, isArray: true })
   updatedColumns: UpdateColumnWithBoard[];
 }
 
