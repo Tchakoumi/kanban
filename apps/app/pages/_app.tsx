@@ -7,6 +7,7 @@ import createEmotionCache from '../config_mui/createEmotionCache';
 import './globalStyles.css';
 import { SWRConfig } from 'swr';
 import { fetcher } from '../services';
+import { IntlProvider } from 'react-intl';
 
 interface CustomAppProps extends AppProps {
   emotionCache?: EmotionCache;
@@ -33,9 +34,11 @@ function CustomApp(props: CustomAppProps) {
             fetcher,
           }}
         >
-          <KanbanThemeProvider>
-            <Component {...pageProps} />
-          </KanbanThemeProvider>
+          <IntlProvider messages={{}} locale={'en'} defaultLocale="en">
+            <KanbanThemeProvider>
+              <Component {...pageProps} />
+            </KanbanThemeProvider>
+          </IntlProvider>
         </SWRConfig>
       </CacheProvider>
     </>
