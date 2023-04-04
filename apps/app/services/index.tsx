@@ -5,8 +5,7 @@ export async function fetcher(url: string) {
   return data;
 }
 
-
 export * from './boards.service';
 export * from './columns.service';
 export * from './tasks.service';
-
+export * from './statistics.service';
