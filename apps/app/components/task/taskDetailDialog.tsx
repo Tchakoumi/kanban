@@ -100,7 +100,10 @@ export default function TaskDetailDialog({
 
   function handleCheckSubtask(subtask_id: string, new_status: boolean) {
     updateSubtask(subtask_id, { is_done: new_status })
-      .then(() => mutate())
+      .then(() => {
+        mutateSubtasks();
+        mutate();
+      })
       .catch((error) => {
         const notif = new useNotification();
         notif.notify({ render: 'Notifying' });
