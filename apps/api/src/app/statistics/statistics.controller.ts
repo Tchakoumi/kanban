@@ -12,6 +12,6 @@ export class StatisticsController {
   @ApiResponse({ type: Statistics })
   @ApiOperation({ description: 'Get moved and updated task rate statistics.' })
   async getMovedTasksStatistics(@Query('interval') interval: number) {
-    return await this.statisticsService.getMovedTasksStatistics(interval ?? 1);
+    return await this.statisticsService.getMovedTasksStatistics(interval ?? 24*60);
   }
 }
