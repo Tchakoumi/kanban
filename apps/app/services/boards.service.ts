@@ -23,7 +23,7 @@ export function useBoardDetails(board_id: string) {
 }
 
 export async function createNewBoard(newBoard: ICreateBoard) {
-  const { data } = await http.post('/boards/new', newBoard);
+  const { data } = await http.post<IBoard>('/boards/new', newBoard);
   return data;
 }
 
