@@ -76,14 +76,8 @@ export default function Graph() {
         datasets: [
           {
             label: 'Task movements over time',
-            data: (data
-              ? [
-                  { count: 0, datetime: new Date('04/03/2023') },
-                  ...data.movedTasksStats,
-                ]
-              : []
-            )
-              .sort((a, b) => (a.datetime > b.datetime ? -1 : 1))
+            data: (data ? data.movedTasksStats : [])
+              .sort((a, b) => (a.datetime > b.datetime ? 1 : -1))
               .map(({ datetime, count }) => ({
                 count: formatNumber(count),
                 datetime: formatDate(datetime, {
@@ -99,14 +93,8 @@ export default function Graph() {
           {
             label: 'Task updates over time',
 
-            data: (data
-              ? [
-                  { count: 0, datetime: new Date('04/03/2023') },
-                  ...data.updatedTaskStats,
-                ]
-              : []
-            )
-              .sort((a, b) => (a.datetime > b.datetime ? -1 : 1))
+            data: (data ? data.updatedTaskStats : [])
+              .sort((a, b) => (a.datetime > b.datetime ? 1 : -1))
               .map(({ datetime, count }) => ({
                 count: formatNumber(count),
                 datetime: formatDate(datetime, {

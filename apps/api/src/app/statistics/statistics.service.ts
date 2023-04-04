@@ -20,8 +20,14 @@ export class StatisticsService {
     });
     const updatedTaskStats = this.getStatistics(auditedTasks, interval);
     return {
-      movedTasksStats,
-      updatedTaskStats,
+      movedTasksStats: [
+        { count: 0, datetime: new Date(process.env.DEPLOYMENT_DATE) },
+        ...movedTasksStats,
+      ],
+      updatedTaskStats: [
+        { count: 0, datetime: new Date(process.env.DEPLOYMENT_DATE) },
+        ...updatedTaskStats,
+      ],
     };
   }
 
