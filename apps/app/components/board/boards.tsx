@@ -53,8 +53,9 @@ export default function Boards() {
       render: 'Creating new board...',
     });
     createNewBoard(val)
-      .then(() => {
+      .then(({ board_id }) => {
         mutate();
+        push(`/${board_id}`);
         notif.update({
           render: 'Board created!',
           autoClose: 2000,
