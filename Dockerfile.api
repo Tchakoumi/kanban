@@ -13,6 +13,9 @@ RUN npm install
 # # add app
 COPY . /app
 
+# # DELETE MIGRATION FILES
+RUN rm -rf /app/apps/api/src/prisma/migrations
+
 #migrate prisma models
 RUN npx prisma generate
 
