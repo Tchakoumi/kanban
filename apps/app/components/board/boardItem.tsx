@@ -4,6 +4,7 @@ import Image from 'next/image';
 import BoardIcon from '../../public/boardIcon.png';
 import BoardIconGrey from '../../public/boardIcon_grey.png';
 import ColoredBoardIcon from '../../public/boardIconColored.png';
+import { LineAxisOutlined } from '@mui/icons-material';
 
 export default function BoardItem({
   title,
@@ -11,12 +12,14 @@ export default function BoardItem({
   colored = false,
   isActive = false,
   disabled = false,
+  dashboard = false,
 }: {
   title: string;
   handleClick: () => void;
   colored?: boolean;
   isActive?: boolean;
   disabled?: boolean;
+  dashboard?: boolean;
 }) {
   const { activeMode } = useMode();
   const theme = generateTheme(activeMode);
@@ -42,7 +45,9 @@ export default function BoardItem({
         },
         backgroundColor: !isActive ? 'none' : theme.palette.primary.main,
         color: colored
-          ? 'none'
+          ? dashboard && isActive
+            ? 'white'
+            : 'none'
           : theme.common[!isActive ? 'medium_grey' : 'white'],
         '& .hover': {
           display: 'none',
@@ -63,12 +68,22 @@ export default function BoardItem({
         borderBottomLeftRadius: 0,
       }}
     >
-      <Image
-        src={colored ? ColoredBoardIcon : isActive ? BoardIcon : BoardIconGrey}
-        alt="board"
-        className="base"
-      />
-      <Image src={ColoredBoardIcon} alt="board" className="hover" />
+      {dashboard ? (
+        <LineAxisOutlined
+          sx={{ color: isActive ? 'white' : theme.palette.primary.main }}
+        />
+      ) : (
+        <>
+          <Image
+            src={
+              colored ? ColoredBoardIcon : isActive ? BoardIcon : BoardIconGrey
+            }
+            alt="board"
+            className="base"
+          />
+          <Image src={ColoredBoardIcon} alt="board" className="hover" />
+        </>
+      )}
       <Typography
         sx={{
           overflow: 'hidden',
