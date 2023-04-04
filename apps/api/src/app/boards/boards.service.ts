@@ -16,15 +16,15 @@ export class BoardsService {
   }
 
   async findOne(board_id: string): Promise<IBoard> {
-    const board = await this.prismaService.board.findUnique({
+    const board = await this.prismaService.board.findFirst({
       select: { board_id: true, board_name: true },
-      where: { board_id },
+      where: { board_id, is_deleted: false },
     });
     return board;
   }
 
   async findOneWithChildren(board_id: string): Promise<IBoardDetails> {
-    const uniqueBoard = await this.prismaService.board.findUnique({
+    const uniqueBoard = await this.prismaService.board.findFirst({
       select: {
         board_id: true,
         board_name: true,
@@ -40,7 +40,7 @@ export class BoardsService {
           orderBy: { column_position: 'asc' },
         },
       },
-      where: { board_id },
+      where: { board_id, is_deleted: false },
     });
     if (!uniqueBoard) return null;
     const { Columns, ...board } = uniqueBoard;
