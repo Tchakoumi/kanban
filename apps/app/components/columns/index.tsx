@@ -22,6 +22,7 @@ export default function Columns() {
   const theme = generateTheme(activeMode);
   const {
     query: { board_id },
+    push,
   } = useRouter();
 
   const {
@@ -30,6 +31,11 @@ export default function Columns() {
     error: columnsError,
     mutate: mutateActiveBoard,
   } = useBoardDetails(String(board_id));
+
+  useEffect(() => {
+    if (boardDetails === null) push('/');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [boardDetails]);
 
   useEffect(() => {
     if (columnsError) {
