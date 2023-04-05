@@ -5,7 +5,9 @@ export function getAxiosInstance(): AxiosInstance {
   const API_BASE_URL =
     process.env['NODE_ENV'] === 'production'
       ? 'https://kanban-api.ingl.io/api'
-      : `${process.env['NX_API_BASE_URL']}/api` ?? 'http://localhost:4000/api';
+      : process.env['NX_API_BASE_URL']
+      ? `${process.env['NX_API_BASE_URL']}/api`
+      : 'http://localhost:4000/api';
   const axiosInstance = axios.create({
     baseURL: API_BASE_URL,
   });
