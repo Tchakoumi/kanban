@@ -70,7 +70,7 @@ export default function TaskDetailDialog({
     data: columns,
     error: columnsError,
     isLoading: areColumnsLoading,
-  } = useColumns(String(board_id));
+  } = useColumns(board_id as string);
 
   useEffect(() => {
     if (columnsError) {

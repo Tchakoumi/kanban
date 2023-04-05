@@ -77,7 +77,7 @@ export default function Column({
   const [actionnedTask, setActionnedTask] = useState<string>();
   const [submissionNotif, setSubmissionNotif] = useState<useNotification>();
 
-  const { mutate } = useActiveBoard(String(actionnedTask));
+  const { mutate } = useActiveBoard(actionnedTask as string);
 
   function deleteTaskHandler(task_id: string) {
     setActionnedTask(task_id);
@@ -156,7 +156,7 @@ export default function Column({
       })
       .finally(() => setActionnedTask(undefined));
   }
-
+  
   return (
     <>
       {openTask && (

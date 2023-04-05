@@ -33,7 +33,7 @@ export default function Columns() {
     data: boardDetails,
     error: columnsError,
     mutate: mutateActiveBoard,
-  } = useBoardDetails(String(board_id));
+  } = useBoardDetails(board_id as string);
 
   useEffect(() => {
     if (boardDetails === null) push('/');
