@@ -27,7 +27,7 @@ export default function ActiveBoard() {
     isLoading: areColumnsLoading,
     data,
     error: columnsError,
-  } = useBoardDetails(String(board_id));
+  } = useBoardDetails(board_id as string);
 
   useEffect(() => {
     if (columnsError) {
@@ -48,6 +48,18 @@ export default function ActiveBoard() {
     setIsMoreMenuOpen(false);
     setAnchorEl(null);
   }
+
+  useEffect(() => {
+    console.log(data);
+    console.log('pathname', pathname);
+    console.log(
+      data?.board_name ??
+        (pathname === '/dashboard'
+          ? 'Platform Usage Statistics'
+          : 'Select a board')
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <>
