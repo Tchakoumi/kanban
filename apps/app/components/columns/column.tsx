@@ -156,7 +156,7 @@ export default function Column({
       })
       .finally(() => setActionnedTask(undefined));
   }
-  
+  console.log('tasks', tasks);
   return (
     <>
       {openTask && (
@@ -209,7 +209,7 @@ export default function Column({
         <ColumnTitle
           color_code={color}
           title={title}
-          totalTasks={tasks.length}
+          totalTasks={(tasks ?? []).length}
         />
         <Scrollbars autoHide universal>
           <Box
