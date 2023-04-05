@@ -49,18 +49,6 @@ export default function ActiveBoard() {
     setAnchorEl(null);
   }
 
-  useEffect(() => {
-    console.log(data);
-    console.log('pathname', pathname);
-    console.log(
-      data?.board_name ??
-        (pathname === '/dashboard'
-          ? 'Platform Usage Statistics'
-          : 'Select a board')
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
   return (
     <>
       <Box
@@ -100,10 +88,11 @@ export default function ActiveBoard() {
           >
             {areColumnsLoading ? (
               <Skeleton sx={{ maxWidth: '200px' }} />
-            ) : data?.board_name ?? pathname === '/dashboard' ? (
-              'Platform Usage Statistics'
             ) : (
-              'Select a board'
+              data?.board_name ??
+              (pathname === '/dashboard'
+                ? 'Platform Usage Statistics'
+                : 'Select a board')
             )}
           </Typography>
         </Tooltip>
