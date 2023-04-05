@@ -78,7 +78,7 @@ export default function Graph() {
             label: 'Task movements over time',
             data: (data ? data.movedTasksStats : [])
               .sort((a, b) =>
-                new Date(a.datetime) > new Date(b.datetime) ? 1 : -1
+                new Date(a.datetime) > new Date(b.datetime) ? -1 : 1
               )
               .map(({ datetime, count }) => ({
                 count: formatNumber(count),
@@ -96,7 +96,7 @@ export default function Graph() {
             label: 'Task updates over time',
             data: (data ? data.updatedTaskStats : [])
               .sort((a, b) =>
-                new Date(a.datetime) > new Date(b.datetime) ? 1 : -1
+                new Date(a.datetime) > new Date(b.datetime) ? -1 : 1
               )
               .map(({ datetime, count }) => ({
                 count: formatNumber(count),
