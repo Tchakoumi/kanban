@@ -117,7 +117,6 @@ export default function Graph() {
   };
 
   useEffect(() => {
-    console.log(data);
     updateGraph();
     // eslint-disable-next-line
   }, [data]);
